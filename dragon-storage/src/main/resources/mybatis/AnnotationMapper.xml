@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="info.yangguo.dragon.storage.mysql.dao.AnnotationMapper">
+    <insert id="addAnnotation" parameterType="AnnotationPojo">
+        INSERT INTO annotation(`type`,ip,port,`time`,spanId,`value`,app) VALUES(#{type},#{ip},#{port},#{time},#{spanId},#{value},#{app})
+    </insert>
+    <select id="getAnnotatin" parameterType="String" resultType="AnnotationPojo">
+        SELECT * FROM annotation WHERE spanId=#{spanId}
+    </select>
+    <delete id="deleteAnnotationBySpanid" parameterType="String">
+        DELETE  FROM annotation WHERE spanId=#{spanId}
+    </delete>
+</mapper>

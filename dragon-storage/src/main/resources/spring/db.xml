@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="propertyConfigurer-manager-db"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="order" value="1"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:mysql.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}"></property>
+        <property name="url" value="${jdbc.url}"></property>
+        <property name="username" value="${jdbc.username}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+
+        <!--公共配置属性-->
+        <property name="maxActive" value="100"></property>
+        <property name="initialSize" value="10"></property>
+        <property name="minIdle" value="10"></property>
+        <property name="jdbcInterceptors"
+                  value="ConnectionState;StatementFinalizer;StatementDecoratorInterceptor;ResetAbandonedTimer"></property>
+
+        <property name="testWhileIdle" value="true"></property>
+        <property name="testOnBorrow" value="true"></property>
+        <property name="validationQuery" value="select 1"></property>
+        <property name="testOnReturn" value="false"></property>
+        <property name="validationInterval" value="30000"></property>
+        <property name="timeBetweenEvictionRunsMillis" value="5000"></property>
+        <property name="maxWait" value="15000"></property>
+        <property name="removeAbandoned" value="true"></property>
+        <property name="removeAbandonedTimeout" value="60"></property>
+        <property name="logAbandoned" value="false"></property>
+        <property name="minEvictableIdleTimeMillis" value="30"></property>
+    </bean>
+
+
+    <bean id="sqlSessionFactoryManager" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
+    </bean>
+
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactoryManager"/>
+    </bean>
+
+    <bean id="annotationMapper"
+          class="info.yangguo.dragon.storage.mysql.dao.impl.AnnotationMapperImpl">
+        <property name="sqlSession" ref="sqlSessionTemplate"/>
+    </bean>
+    <bean id="serviceMapper" class="info.yangguo.dragon.storage.mysql.dao.impl.ServiceMapperImpl">
+        <property name="sqlSession" ref="sqlSessionTemplate"/>
+    </bean>
+    <bean id="spanMapper" class="info.yangguo.dragon.storage.mysql.dao.impl.SpanMapperImpl">
+        <property name="sqlSession" ref="sqlSessionTemplate"/>
+    </bean>
+    <bean id="traceMapper" class="info.yangguo.dragon.storage.mysql.dao.impl.TraceMapperImpl">
+        <property name="sqlSession" ref="sqlSessionTemplate"/>
+    </bean>
+</beans>

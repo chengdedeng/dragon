@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="info.yangguo.dragon.storage.mysql.dao.ServiceMapper">
+    <insert id="addService" parameterType="ServicePojo" useGeneratedKeys="true"
+            keyProperty="serviceId">
+        INSERT INTO service(serviceId, serviceName) VALUES(#{serviceId}, #{serviceName})
+    </insert>
+    <select id="getServiceByName" parameterType="ServicePojo" resultType="ServicePojo">
+        SELECT * FROM service WHERE serviceName =#{serviceName}
+    </select>
+    <select id="getServiceByOffset" parameterType="Map" resultType="ServicePojo">
+        select * from service where serviceId >= (select serviceId from service order by serviceId limit #{offset}, 1) limit #{limit}
+    </select>
+    <select id="getServiceById" parameterType="Long" resultType="ServicePojo">
+        SELECT * FROM service WHERE serviceId =#{serviceId}
+    </select>
+</mapper>

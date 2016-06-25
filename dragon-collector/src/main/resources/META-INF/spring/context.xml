@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://code.alibabatech.com/schema/dubbo
+	http://code.alibabatech.com/schema/dubbo/dubbo.xsd"
+       default-autowire="byType">
+    <import resource="classpath*:spring/db.xml"/>
+
+    <bean id="configuration"
+          class="info.yangguo.dragon.storage.mysql.Configuration">
+        <property name="queueSize" value="${collector.mysql.queueSize}"/>
+    </bean>
+    <!--根据存储不同可以选择不同的insert service-->
+    <bean id="insertService"
+          class="info.yangguo.dragon.storage.mysql.InsertMysqlServiceImpl">
+        <constructor-arg ref="configuration"/>
+    </bean>
+
+    <bean id="traceServiceImpl" class="info.yangguo.dragon.common.service.impl.TraceServiceImpl">
+        <property name="insertService" ref="insertService"/>
+    </bean>
+    <dubbo:service interface="info.yangguo.dragon.common.service.TraceService"
+                   ref="traceServiceImpl"/>
+</beans>

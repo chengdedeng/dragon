@@ -1,0 +1,85 @@
+@charset "utf-8";
+body, html{margin: 0; padding: 0;}
+body{font-family: Helvetica, 'Microsoft YaHei', Arial, sans-serif,  'SimHei'; color: #333; background-color: #f7f5f5;}
+a{color: inherit; text-decoration: none;}
+ul > li{list-style: none}
+/** 清浮动 **/
+.clearFix:after, .clearFix:before{content: ''; display: block; clear: both;}
+
+.wrap{margin: 0 auto; padding-left: 10px; padding-right: 10px; width: 80%; min-width: 1280px; max-width: 1440px; box-sizing: border-box;}
+
+/** ~~~~~~~~~~ 头部 ~~~~~~~~~~ **/
+.navbar{font-size: 32px; line-height: 50px; color: #fff; border-bottom: none;}
+/*.logo{display: inline-block; height: 50px;}*/
+.logo img{float: left; margin-top: 2px; margin-right: 10px; width: 46px; height: 46px;}
+
+/** ~~~~~~~~~~ 搜索栏 ~~~~~~~~~~ **/
+.searchbar{position: fixed; top: 50px; right: 0; left: 0; background-color: #f7f5f5;}
+.searchbar-nav{padding-top: 25px; padding-bottom: 20px;}
+.searchbar-nav .btn-group{margin-right: 10px;}
+.searchbar-nav .btn:hover{background-color: #fff;}
+.searchbar-nav input{margin: 0; border: none; outline: none;}
+.searchbar-nav .btn + .dropdown-toggle{padding-top: 7px; padding-bottom: 7px; width: 32px;}
+/** "搜索"按钮 **/
+.btn-search{padding: 5px 16px; width: 54px; height: 34px; font-size: 20px; color: #fff; background-color: #e45057; cursor: pointer;}
+
+.page-container{margin-top: 130px;}
+
+/** ~~~~~~~~~~ 表格 ~~~~~~~~~~ **/
+.body-table{padding: 10px; background-color: #fff; border: solid #e6e6e6 1px;}
+.table-striped{margin-bottom: 0; table-layout: fixed; border-bottom: solid #e6e6e6 1px;}
+.table-striped > thead > tr > th, .table-striped > thead > tr > td, .table-striped > tbody > tr > td{padding: 10px 20px; overflow: hidden; text-overflow: ellipsis; word-break: break-all; white-space: nowrap; vertical-align: middle; text-align: center;}
+.table-striped > thead > tr > th, .table-striped > thead > tr > td{font-size: 16px; border-bottom: solid #e6e6e6 1px;}
+.table-striped > tbody > tr > td{border: none;}
+.table-striped > tbody > tr:nth-of-type(odd){background-color: #f7f5f5;}
+.table-striped > tbody > tr.highlight{background-color: #f3d4d5;}
+
+.table-footer{padding-top: 10px;}
+.table-footer .footer-data{float: left; margin-right: 50px; height: 30px; line-height: 30px;}
+.table-footer .footer-data strong{color: #e45057;}
+.table-footer .select-num{margin: 0 10px; padding: 5px 5px; border: solid #e6e6e6 1px;}
+
+/** ~~~~~~~~~~ 分页 ~~~~~~~~~~ **/
+.nav-pagination{float: right;margin-right: 10px}
+.btn-pagination{float: left; margin: 0 5px; padding: 5px 7px; width: 30px; height: 30px; background-color: #fff; border: solid #e6e6e6 1px; cursor: pointer;}
+.btn-pagination:first-child{margin-left: 0;}
+.btn-pagination:last-child{margin-right: 0;}
+.btn-pagination.disabled{color: #e6e6e6; cursor: no-drop;}
+
+/** ~~~~~~~~~~ 弹出层 ~~~~~~~~~~ **/
+.popup-cover{display: none; position: fixed; z-index: 1900; top: 0; right: 0; bottom: 0; left: 0; background-color: rgba(0,0,0,.7);}
+.popup-box{position: absolute; top: 50%; left: 50%; margin-left: -370px; width: 740px; background-color: #f7f5f5;}
+.popup-title{position: relative; margin: 0; padding: 15px 20px; width: 100%; height: 50px; line-height: 20px; font-size: 16px; font-weight: bold; background-color: #fff;}
+.popup-close{position: absolute; top: 50%; right: 20px; margin-top: -10px; width: 20px; height: 20px; background: url(../images/icons-small.png) no-repeat 5px 5px; cursor: pointer;}
+.popup-body{padding: 10px 20px 20px;}
+.popup-form{margin: 0; padding: 0;}
+.popup-form li{position: relative; margin: 10px 0; padding: 7px 10px; width: 100%; list-style: none; background-color: #fff; border: solid #e6e6e6 1px; cursor: pointer;}
+.popup-form li:after{content: ""; position: absolute; z-index: 10; right: 1px; bottom: 2px; width: 8px; height: 6px; background: url(../images/icons-small.png) no-repeat -20px 0;}
+.popup-form li:before{content: ''; position: absolute; right: -12px; bottom: -12px; width: 0; height: 0; border-style: solid; border-width: 12px; border-color: transparent transparent transparent #e6e6e6; transform: rotate(45deg);}
+.popup-form li.active{border-color: #e45057;}
+.popup-form li.active:before{border-left-color: #e45057;}
+/** 分页 **/
+.popup-box .nav-pagination{float: none; padding-top: 10px;}
+/** 弹出层表格——节点详情 **/
+.popup-form-horizontal{max-height: 500px; overflow-x: hidden; overflow-y: auto;}
+
+#pop-service{}
+#pop-tree{margin-top: -315px; margin-left: -620px; width: 1240px; height: 630px;}
+
+/** ~~~~~~~~~~ 表单 ~~~~~~~~~~ **/
+.form-group:last-child{margin-bottom: 0;}
+.form-control-static{word-break: break-all;}
+
+/** --------- 树状图-连线 --------- **/
+.tree-link{fill: none; stroke-width: 1.5px;}
+/** 没有异常时连线和节点的颜色 **/
+.tree-link-success, .tree-circle-success{stroke: #008000;}
+/** 出现异常时连线和节点的颜色 **/
+.tree-link-error, .tree-circle-error{stroke: #e45057;}
+/** 连线上表示连接时长的文字 **/
+.tree-link-text{fill: #999; font-size: 12px;}
+
+/** --------- 树状图-节点-圈 --------- **/
+.tree-circle{fill: #fff; stroke-width: 1.5px;}
+/** 节点上表示AppName的文字 **/
+.tree-text{fill: #333; font-size: 14px; cursor: pointer;}

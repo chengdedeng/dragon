@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="info.yangguo.dragon.storage.mysql.dao.SpanMapper">
+    <insert id="addSpan" parameterType="SpanPojo">
+        INSERT INTO span(spanId,traceId,parentId,serviceId) VALUES(#{spanId},#{traceId},#{parentId},#{serviceId})
+    </insert>
+    <select id="getSpanByTraceId" parameterType="String" resultType="SpanPojo">
+        SELECT * FROM span where traceId=#{traceId}
+    </select>
+    <delete id="deleteSpanById" parameterType="String">
+        DELETE  FROM span WHERE spanId=#{spanId}
+    </delete>
+</mapper>

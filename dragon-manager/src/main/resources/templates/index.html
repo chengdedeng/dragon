@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>分布式追踪系统</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="/css/bootstrap/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/index.css"/>
+</head>
+<body>
+<!-- 网页头部 -->
+<header class="navbar navbar-default navbar-fixed-top">
+    <div class="wrap">
+        <div class="logo"><img src="/images/logo.png"/><span>Dragon</span></div>
+    </div>
+</header>
+
+<main>
+    <!-- 搜索栏 -->
+    <nav class="searchbar">
+        <div class="wrap searchbar-nav">
+            <div id="choose-service" class="btn-group">
+                <div class="btn btn-default">
+                    <input type="text" id="service_name" data-service="" placeholder="服务名"
+                           style="width: 280px;"/>
+                </div>
+                <div class="btn btn-default dropdown-toggle">
+                    <span class="glyphicon glyphicon-arrow-right"></span>
+                </div>
+            </div>
+            <div class="btn-group">
+                <div class="btn btn-default"><input type="text" id="start_time"
+                                                    class="form_datetime" placeholder="开始时间"
+                                                    style="width: 165px;"/></div>
+                <div class="btn btn-default dropdown-toggle">
+                    <span class="glyphicon glyphicon-th"></span>
+                </div>
+            </div>
+            <div id="search" class="btn-group btn-search"><span
+                    class="glyphicon glyphicon-search"></span></div>
+        </div>
+    </nav>
+    <!-- 页面主体 -->
+    <div class="page-container">
+        <div class="wrap">
+            <div class="body-table">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th style="width: 40%">TraceId</th>
+                        <th style="width: 25%">TraceTime</th>
+                        <th style="width: 15%">TotalTime</th>
+                        <th style="width: 20%">ChooseTime</th>
+                    </tr>
+                    </thead>
+                    <tbody id="content">
+                    </tbody>
+                </table>
+
+                <!-- 分页 -->
+                <div class="table-footer clearFix">
+                    <nav class="nav-pagination clearFix">
+                        <div id="list_pre_btn" class="btn-pagination disabled"><span
+                                class="glyphicon glyphicon-triangle-left"></span></div>
+                        <div id="list_next_btn" class="btn-pagination disabled"><span
+                                class="glyphicon glyphicon-triangle-right"></span></div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- 弹出选择框 -->
+<div class="popup-cover"></div>
+
+
+<script id="test" type="text/html">
+    {{each value}}
+    <tr class="data_info{{if $value.exc}} highlight{{/if}}" data-info="{{$value.nodeVo}}">
+        <td>{{$value.traceId}}</td>
+        <td>{{$value.traceTime}}</td>
+        <td>{{$value.totalTime}}</td>
+        <td>{{$value.chooseTime}}</td>
+    </tr>
+    {{/each}}
+</script>
+<script type="text/javascript" src="/js/jquery/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap/bootstrap.min.js"></script>
+<script type="text/javascript"
+        src="/js/bootstrap/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap/bootstrap-datetimepicker.fr.js"></script>
+<script type="text/javascript" src="/js/d3.js"></script>
+<script type="text/javascript" src="/js/template.js"></script>
+<!-- 配置地址文件 -->
+<script type="text/javascript" src="/js/net.js"></script>
+<script type="text/javascript" src="/js/index.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
