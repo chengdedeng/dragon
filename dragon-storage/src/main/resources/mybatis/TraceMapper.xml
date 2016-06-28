@@ -7,10 +7,10 @@
         INSERT INTO trace(traceId,serviceId,`time`) VALUES(#{traceId}, #{serviceId}, #{time})
     </insert>
     <select id="getTraceId" parameterType="Map" resultType="String">
-        SELECT DISTINCT traceId FROM trace where time &lt; #{beginTime} limit #{limit}
+        SELECT traceId FROM trace where time &lt; #{beginTime} limit #{limit}
     </select>
     <select id="getTraceIdByServiceId" parameterType="Map" resultType="String">
-        SELECT DISTINCT traceId FROM trace where serviceId=#{serviceId} and `time` >= #{beginTime} limit #{offset},#{limit}
+        SELECT traceId FROM trace where serviceId=#{serviceId} and #{endTime} > `time` and `time`  &gt;= #{beginTime}
     </select>
     <delete id="deleteTraceById" parameterType="String">
         DELETE  FROM trace WHERE traceId=#{traceId}

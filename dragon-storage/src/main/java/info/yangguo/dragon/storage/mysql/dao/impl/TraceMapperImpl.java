@@ -50,12 +50,11 @@ public class TraceMapperImpl implements TraceMapper {
 
 
     @Override
-    public List<String> getTraceIdByServiceId(int serviceId, long beginTime, int offset, int limit) {
+    public List<String> getTraceIdByServiceId(int serviceId, long beginTime) {
         Map map = new HashMap();
         map.put("serviceId", serviceId);
         map.put("beginTime", beginTime);
-        map.put("offset", offset);
-        map.put("limit", limit);
+        map.put("endTime",beginTime+1000*60*5);
         return sqlSession.selectList("getTraceIdByServiceId", map);
     }
 

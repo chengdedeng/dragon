@@ -18,6 +18,7 @@ public class AnnotationPojo implements Serializable {
     private String spanId;
     private String value;
     private String app;
+    private String traceId;
 
     public String getType() {
         return type;
@@ -73,6 +74,14 @@ public class AnnotationPojo implements Serializable {
 
     public void setApp(String app) {
         this.app = app;
+    }
+
+    public String getTraceId() {
+        return traceId;
+    }
+
+    public void setTraceId(String traceId) {
+        this.traceId = traceId;
     }
 
     //主要用在去掉相同异常,特别是既是provider有事consumer的地方

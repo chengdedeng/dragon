@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:rdb="http://www.dangdang.com/schema/ddframe/rdb"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/tx
+                        http://www.springframework.org/schema/tx/spring-tx.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context.xsd
+                        http://www.dangdang.com/schema/ddframe/rdb
+                        http://www.dangdang.com/schema/ddframe/rdb/rdb.xsd">
 
     <bean id="propertyConfigurer-manager-db"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -16,12 +24,9 @@
         </property>
     </bean>
 
-    <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource">
-        <property name="driverClassName" value="${jdbc.driverClassName}"></property>
-        <property name="url" value="${jdbc.url}"></property>
-        <property name="username" value="${jdbc.username}"></property>
-        <property name="password" value="${jdbc.password}"></property>
 
+    <bean id="dataSourceParent" class="org.apache.tomcat.jdbc.pool.DataSource" abstract="true">
+        <property name="driverClassName" value="${jdbc.driverClassName}"></property>
         <!--公共配置属性-->
         <property name="maxActive" value="100"></property>
         <property name="initialSize" value="10"></property>
@@ -43,26 +48,65 @@
     </bean>
 
 
-    <bean id="sqlSessionFactoryManager" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
+    <bean id="ds_0" class="org.apache.tomcat.jdbc.pool.DataSource" parent="dataSourceParent">
+        <property name="url" value="${jdbc.url1}"></property>
+        <property name="username" value="${jdbc.username}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+    </bean>
+    <bean id="ds_1" class="org.apache.tomcat.jdbc.pool.DataSource" parent="dataSourceParent">
+        <property name="url" value="${jdbc.url2}"></property>
+        <property name="username" value="${jdbc.username}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+    </bean>
+    <bean id="ds_2" class="org.apache.tomcat.jdbc.pool.DataSource" parent="dataSourceParent">
+        <property name="url" value="${jdbc.url3}"></property>
+        <property name="username" value="${jdbc.username}"></property>
+        <property name="password" value="${jdbc.password}"></property>
     </bean>
 
-    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
-        <constructor-arg index="0" ref="sqlSessionFactoryManager"/>
+    <rdb:strategy id="databaseShardingStrategy" sharding-columns="traceId"
+                  algorithm-class="info.yangguo.dragon.storage.mysql.algorithm.SingleKeyModuloDatabaseShardingAlgorithm"/>
+    <rdb:strategy id="tableShardingStrategy" sharding-columns="traceId" algorithm-class="info.yangguo.dragon.storage.mysql.algorithm.SingleKeyModuloTableShardingAlgorithm"/>
+
+    <rdb:data-source id="shardingDataSource">
+        <rdb:sharding-rule data-sources="ds_0,ds_1,ds_2">
+            <rdb:table-rules>
+                <rdb:table-rule logic-table="trace" actual-tables="trace${0..9}" database-strategy="databaseShardingStrategy" table-strategy="tableShardingStrategy"/>
+                <rdb:table-rule logic-table="span" actual-tables="span${0..9}" database-strategy="databaseShardingStrategy" table-strategy="tableShardingStrategy"/>
+                <rdb:table-rule logic-table="annotation" actual-tables="annotation${0..9}" database-strategy="databaseShardingStrategy" table-strategy="tableShardingStrategy"/>
+            </rdb:table-rules>
+        </rdb:sharding-rule>
+    </rdb:data-source>
+
+
+    <bean id="sqlSessionFactoryBean1" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="ds_0"/>
+        <property name="configLocation" value="classpath:mybatis/mybatis-config1.xml"/>
+    </bean>
+    <bean id="sqlSessionFactoryBean2" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="shardingDataSource"/>
+        <property name="configLocation" value="classpath:mybatis/mybatis-config2.xml"/>
+    </bean>
+
+    <bean id="sqlSessionTemplate1" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactoryBean1"/>
+    </bean>
+
+    <bean id="sqlSessionTemplate2" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactoryBean2"/>
     </bean>
 
     <bean id="annotationMapper"
           class="info.yangguo.dragon.storage.mysql.dao.impl.AnnotationMapperImpl">
-        <property name="sqlSession" ref="sqlSessionTemplate"/>
+        <property name="sqlSession" ref="sqlSessionTemplate2"/>
     </bean>
     <bean id="serviceMapper" class="info.yangguo.dragon.storage.mysql.dao.impl.ServiceMapperImpl">
-        <property name="sqlSession" ref="sqlSessionTemplate"/>
+        <property name="sqlSession" ref="sqlSessionTemplate1"/>
     </bean>
     <bean id="spanMapper" class="info.yangguo.dragon.storage.mysql.dao.impl.SpanMapperImpl">
-        <property name="sqlSession" ref="sqlSessionTemplate"/>
+        <property name="sqlSession" ref="sqlSessionTemplate2"/>
     </bean>
     <bean id="traceMapper" class="info.yangguo.dragon.storage.mysql.dao.impl.TraceMapperImpl">
-        <property name="sqlSession" ref="sqlSessionTemplate"/>
+        <property name="sqlSession" ref="sqlSessionTemplate2"/>
     </bean>
 </beans>

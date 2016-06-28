@@ -5,12 +5,12 @@
 
 <mapper namespace="info.yangguo.dragon.storage.mysql.dao.AnnotationMapper">
     <insert id="addAnnotation" parameterType="AnnotationPojo">
-        INSERT INTO annotation(`type`,ip,port,`time`,spanId,`value`,app) VALUES(#{type},#{ip},#{port},#{time},#{spanId},#{value},#{app})
+        INSERT INTO annotation(`type`,ip,port,`time`,spanId,`value`,app,traceId) VALUES(#{type},#{ip},#{port},#{time},#{spanId},#{value},#{app},#{traceId})
     </insert>
-    <select id="getAnnotatin" parameterType="String" resultType="AnnotationPojo">
-        SELECT * FROM annotation WHERE spanId=#{spanId}
+    <select id="getAnnotatin" parameterType="Map" resultType="AnnotationPojo">
+        SELECT * FROM annotation WHERE spanId=#{spanId} and traceId=#{traceId}
     </select>
-    <delete id="deleteAnnotationBySpanid" parameterType="String">
-        DELETE  FROM annotation WHERE spanId=#{spanId}
+    <delete id="deleteAnnotationBySpanid" parameterType="Map">
+        DELETE  FROM annotation WHERE spanId=#{spanId} and traceId=#{traceId}
     </delete>
 </mapper>

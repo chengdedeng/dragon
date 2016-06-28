@@ -37,7 +37,7 @@ public class InsertMysqlServiceImpl implements InsertService {
     }
 
     public InsertMysqlServiceImpl(Configuration configuration) {
-        int queueSize = configuration.getQueueSize() == null ? 2048 : configuration.getQueueSize();
+        int queueSize = configuration.getQueueSize() == 0 ? 2048 : configuration.getQueueSize();
         queue = new ArrayBlockingQueue<List<SpanDto>>(queueSize);
         for (int i = 0; i < taskCount; i++) {
             executors.execute(new InsertTask());
@@ -125,6 +125,7 @@ public class InsertMysqlServiceImpl implements InsertService {
             if (annotationDto.getTime() != null) {
                 annotationPojo.setTime(annotationDto.getTime());
             }
+            annotationPojo.setTraceId(spanDto.getTraceId());
             annotationPojo.setValue(annotationDto.getValue());
             //由于没有事务,逻辑的设计严重依赖来于顺序
             if (annotationDto.getType().equals(AnnotationType.ClientSend)) {

@@ -10,6 +10,6 @@
         SELECT * FROM span where traceId=#{traceId}
     </select>
     <delete id="deleteSpanById" parameterType="String">
-        DELETE  FROM span WHERE spanId=#{spanId}
+        DELETE  FROM span WHERE spanId=#{spanId} and traceId=#{traceId}
     </delete>
 </mapper>

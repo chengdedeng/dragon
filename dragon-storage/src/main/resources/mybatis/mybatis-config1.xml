@@ -9,15 +9,8 @@
     <typeAliases>
         <typeAlias alias="ServicePojo"
                    type="info.yangguo.dragon.storage.mysql.dao.pojo.ServicePojo"/>
-        <typeAlias alias="TracePojo" type="info.yangguo.dragon.storage.mysql.dao.pojo.TracePojo"/>
-        <typeAlias alias="SpanPojo" type="info.yangguo.dragon.storage.mysql.dao.pojo.SpanPojo"/>
-        <typeAlias alias="AnnotationPojo"
-                   type="info.yangguo.dragon.storage.mysql.dao.pojo.AnnotationPojo"/>
     </typeAliases>
     <mappers>
         <mapper resource="mybatis/ServiceMapper.xml"/>
-        <mapper resource="mybatis/AnnotationMapper.xml"/>
-        <mapper resource="mybatis/SpanMapper.xml"/>
-        <mapper resource="mybatis/TraceMapper.xml"/>
     </mappers>
 </configuration>

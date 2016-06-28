@@ -5,29 +5,29 @@ public class Configuration {
     /**
      * 接收端队列长度
      */
-    private Integer queueSize;
+    private int queueSize;
     /**
      * trace日志的生命周期,单位天
      */
-    private Integer lifeTime;
+    private long lifeTime;
     /**
      * 过期日志回收间隔时间,单位分钟
      */
     private Integer deleteInterval;
 
-    public Integer getQueueSize() {
+    public int getQueueSize() {
         return queueSize;
     }
 
-    public void setQueueSize(Integer queueSize) {
+    public void setQueueSize(int queueSize) {
         this.queueSize = queueSize;
     }
 
-    public Integer getLifeTime() {
+    public long getLifeTime() {
         return lifeTime;
     }
 
-    public void setLifeTime(Integer lifeTime) {
+    public void setLifeTime(long lifeTime) {
         this.lifeTime = lifeTime;
     }
 

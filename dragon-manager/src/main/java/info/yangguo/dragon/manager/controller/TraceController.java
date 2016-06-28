@@ -57,7 +57,7 @@ import java.util.regex.Pattern;
 public class TraceController {
     private static Logger logger = LoggerFactory.getLogger(TraceController.class);
     LoadingCache<String, TraceVo> cache = CacheBuilder.newBuilder()
-            .maximumSize(10000)
+            .maximumSize(100000)
             .expireAfterWrite(10, TimeUnit.MINUTES)
             .build(
                     new CacheLoader<String, TraceVo>() {
@@ -95,19 +95,19 @@ public class TraceController {
     public ResultVo<List<TraceVo>> getDefaultTraces(@RequestBody DragonTraceRequest dragonTraceRequest) {
         ResultVo resultVo = new ResultVo();
         resultVo.setCode(ResultCode.C200.getCode());
-        //为了防止查询查询效率下降太厉害,限制最大查询条数为5000
-        if (dragonTraceRequest.getPage() * dragonTraceRequest.getLimit() > 5000) {
-            resultVo.setCode(ResultCode.C403.getCode());
-            return resultVo;
-        }
         List<TraceVo> traceVos = new ArrayList<>();
         resultVo.setValue(traceVos);
-        int offset = (dragonTraceRequest.getPage() - 1) * dragonTraceRequest.getLimit();
-        List<String> traceIds = traceMapper.getTraceIdByServiceId(dragonTraceRequest.getServiceId(), dragonTraceRequest.getTraceTime(), offset, dragonTraceRequest.getLimit());
+        List<String> traceIds = traceMapper.getTraceIdByServiceId(dragonTraceRequest.getServiceId(), dragonTraceRequest.getTraceTime());
         for (String traceId : traceIds) {
             try {
                 TraceVo traceVo = cache.get(dragonTraceRequest.getServiceId() + "-" + traceId);
-                traceVos.add(traceVo);
+                TraceVo tmp = new TraceVo();
+                tmp.setTraceId(traceVo.getTraceId());
+                tmp.setTraceTime(traceVo.getTraceTime());
+                tmp.setChooseTime(traceVo.getChooseTime());
+                tmp.setTotalTime(traceVo.getTotalTime());
+                tmp.setExc(traceVo.isExc());
+                traceVos.add(tmp);
             } catch (Exception e) {
                 logger.debug("traceId={} metadata is broken", traceId);
             }
@@ -162,7 +162,7 @@ public class TraceController {
             String id = spanPojo.getSpanId();
             AnnotationTypeMap annotationTypeMap = new AnnotationTypeMap();
             //将annotation结构化
-            List<AnnotationPojo> annotationPojos = annotationMapper.getAnnotation(id);
+            List<AnnotationPojo> annotationPojos = annotationMapper.getAnnotation(id, traceId);
             for (AnnotationPojo annotationPojo : annotationPojos) {
                 if (annotationPojo.getType().equals("cs")) {
                     annotationTypeMap.CSAnnotationPojo = annotationPojo;

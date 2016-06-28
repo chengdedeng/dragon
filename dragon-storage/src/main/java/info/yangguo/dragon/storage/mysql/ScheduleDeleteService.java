@@ -47,7 +47,7 @@ public class ScheduleDeleteService {
     public void delete(String traceId, List<SpanPojo> spanPojos) {
         //由于没有事务,逻辑的设计严重依赖来于顺序
         for (SpanPojo spanPojo : spanPojos) {
-            annotationMapper.deleteAnnotation(spanPojo.getSpanId());
+            annotationMapper.deleteAnnotation(spanPojo.getSpanId(), traceId);
             spanMapper.deleteSpan(spanPojo.getSpanId());
         }
         traceMapper.deleteTrace(traceId);

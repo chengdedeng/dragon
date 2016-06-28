@@ -13,8 +13,6 @@ import com.wordnik.swagger.annotations.ApiModel;
 public class DragonTraceRequest {
     private int serviceId;//serviceId
     private long traceTime;//选定服务的追踪时间
-    private int page;//第几页
-    private int limit;//每页条数
 
     public int getServiceId() {
         return serviceId;
@@ -30,21 +28,5 @@ public class DragonTraceRequest {
 
     public void setTraceTime(long traceTime) {
         this.traceTime = traceTime;
-    }
-
-    public int getPage() {
-        return page;
-    }
-
-    public void setPage(int page) {
-        this.page = page;
-    }
-
-    public int getLimit() {
-        return limit;
-    }
-
-    public void setLimit(int limit) {
-        this.limit = limit;
     }
 }

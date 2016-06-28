@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="lazyLoadingEnabled" value="false"/>
+        <setting name="logImpl" value="LOG4J"/>
+    </settings>
+    <typeAliases>
+        <typeAlias alias="TracePojo" type="info.yangguo.dragon.storage.mysql.dao.pojo.TracePojo"/>
+        <typeAlias alias="SpanPojo" type="info.yangguo.dragon.storage.mysql.dao.pojo.SpanPojo"/>
+        <typeAlias alias="AnnotationPojo"
+                   type="info.yangguo.dragon.storage.mysql.dao.pojo.AnnotationPojo"/>
+    </typeAliases>
+    <mappers>
+        <mapper resource="mybatis/AnnotationMapper.xml"/>
+        <mapper resource="mybatis/SpanMapper.xml"/>
+        <mapper resource="mybatis/TraceMapper.xml"/>
+    </mappers>
+</configuration>
