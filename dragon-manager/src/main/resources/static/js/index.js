@@ -32,9 +32,9 @@ var loadService = {
 	startService: 1,
 	// 每页加载条数
 	limitService: 10,
-	init: function(container, startService, limitService) {
+	init: function(container, limitService) {
 		var _this = this;
-		_this.startService = startService;
+		_this.startService = 1;
 		_this.limitService = limitService;
 		$(container).bind("click", function() {
 			// 如果已经加载过服务名，直接显示
@@ -76,7 +76,7 @@ var loadService = {
 			$(".popup-form").on("click", "li", function() {
 				$(this).addClass("active").siblings().removeClass("active");
 				// 在页面中的服务名输入框中显示该服务名称
-				$(container).find("input").val($(this).html()).attr("data-service", $(this).attr("data-id"));
+				$(container).val($(this).html()).attr("data-service", $(this).attr("data-id"));
 				// 关闭弹出层
 				_this.closePop($(this));
 			})
@@ -297,55 +297,84 @@ var loadDetail = {
 };
 
 // 点击搜索，展示列表
-var loadList = {
+var loadPage = {
+	// preBtn: “上一页”按钮
 	preBtn: null,
+	// nextBtn: “下一页”按钮
 	nextBtn: null,
-	// 起始加载页数
-	startList: 1,
-	// 每页加载条数
-	limitList: 20,
-	init: function(searchBtn, preBtn, nextBtn, startList, limitList){
+	// datas: 记录所有符合条件的数据
+	datas: [],
+	// nowPage: 当前页数
+	nowPage: 1,
+	// totalPage: 总页数
+	totalPage: null,
+	// limitList: 每页显示条数
+	limitList: null,
+	// totalList: 数据总条数
+	totalList: null,
+	init: function(searchBtn, preBtn, nextBtn, limitList) {
 		var _this = this;
 		_this.preBtn = preBtn;
 		_this.nextBtn = nextBtn;
-		_this.startList = startList;
 		_this.limitList = limitList;
+
 		// 点击“搜索”按钮
 		$(searchBtn).bind("click", function() {
-			_this.getData(_this.startList, _this.limitList);
+			// 获取serviceId
+			var serviceId = $("#service_name").attr("data-service");
+			// 获取traceTime
+			var traceTime = $("#start_time").val();
+			// 将traceTime转化成时间戳格式
+			traceTime = datetime_to_unix(traceTime);
+			// 防止服务名或开始时间为空
+			if (serviceId == "" || !traceTime) {
+				return;
+			}
+			_this.loadData(parseInt(serviceId), traceTime);
 		});
 		// 点击“上一页”按钮
 		$(preBtn).bind("click", function() {
 			if ($(this).hasClass("disabled")) {return;}
-			_this.getData(--_this.startList, _this.limitList);
+			_this.getData(--_this.nowPage);
 		});
 		// 点击“下一页”按钮
 		$(nextBtn).bind("click", function() {
 			if ($(this).hasClass("disabled")) {return;}
-			_this.getData(++_this.startList, _this.limitList);
+			_this.getData(++_this.nowPage);
+		});
+		// 点击“跳转”按钮
+		$(".btn-turn").bind("click", function() {
+			var turnPage = $("#turnPage").val().trim();
+			// 防止输入有误
+			if (!checkNum(turnPage)) {
+				alert("请输入正确的跳转页码");
+				return;
+			}
+			turnPage = parseInt(turnPage);
+			// 防止超出页码范围
+			if (turnPage < 1 || turnPage > _this.totalPage) {
+				alert("页数超出范围");
+				return;
+			}
+			// 防止重复查询
+			if (turnPage == _this.nowPage) {
+				return;
+			}
+			_this.nowPage = turnPage;
+			_this.getData(_this.nowPage);
 		});
 	},
-	// 加载数据
-	getData: function(startList, limitList) {
+	// 查询所有符合条件的记录
+	loadData: function(serviceId, traceTime) {
+		var _this = this;
+
 		// 首先清空表格数据
 		document.getElementById('content').innerHTML = "";
-		var _this = this;
-		// 获取serviceId
-		var serviceId = $("#service_name").attr("data-service");
-		// 获取traceTime
-		var traceTime = $("#start_time").val();
-		// 将traceTime转化成时间戳格式
-		traceTime = datetime_to_unix(traceTime);
-		// 防止服务名或开始时间为空
-		if (serviceId == "" || !traceTime) {
-			return;
-		}
+		
 		// 定义POST请求数据
 		var data = {
-			"serviceId": parseInt(serviceId),
-			"traceTime": traceTime,
-			"page": startList,
-			"limit": limitList
+			"serviceId": serviceId,
+			"traceTime": traceTime
 		};
 		// 获取请求数据
 		Net.getSearchData(JSON.stringify(data), function(result) {
@@ -354,61 +383,94 @@ var loadList = {
 				alert("异常");
 				return;
 			}
+
+			var value = result.value;
 			// 如果返回数据长度为零
-			if (result.value.length == 0) {
-				if (_this.startService > 1) {_this.startService--;}
-				// “下一页”按钮不可用
-				$(_this.nextBtn).addClass("disabled");
+			if (value.length == 0) {
 				alert("没有数据了");
 				return;
 			}
+
 			// 重新格式化返回数据的时间
-			for (var i = 0; i < result.value.length; i++) {
-				result.value[i].traceTime = new Date(result.value[i].traceTime).Format('yyyy-MM-dd h:m:s');
-				result.value[i].nodeVo = JSON.stringify(result.value[i].nodeVo);
+			for (var i = 0; i < value.length; i++) {
+				value[i].traceTime = new Date(value[i].traceTime).Format('yyyy-MM-dd hh:mm:ss');
+				value[i].nodeVo = JSON.stringify(value[i].nodeVo);
 			}
-			var addHtml = template('test', result);
-			document.getElementById('content').innerHTML = addHtml;
-				
-			// 判断是否有前一页
-			if (startList == 1) {
-				$(_this.preBtn).addClass("disabled");
-			} else {
-				$(_this.preBtn).removeClass("disabled");
-			}
-			// 判断是否有后一页
-			if (result.value.length < limitList) {
-				$(_this.nextBtn).addClass("disabled");
-			} else {
-				$(_this.nextBtn).removeClass("disabled");
-			}
+
+			_this.datas = value;
+			// 计算总数据条数
+			_this.totalList = value.length;
+			_this.nowPage = 1;
+			// 计算总页数
+			_this.totalPage = Math.ceil(_this.totalList / _this.limitList);
+
+			// 页面部分信息显示
+			$("#totalPage").html(_this.totalPage);
+			$("#totalList").html(_this.totalList);
+			$(".footer-data").show();
+
+			// 显示数据
+			_this.getData(_this.nowPage);
 		});
+	},
+	// 显示当页数据
+	getData: function(nowPage) {
+		// 存放当页显示的数据
+		var list = { value: [] };
+
+		var _this = this;
+		_this.nowPage = nowPage;
+
+		// 判断是否有前一页
+		if (_this.nowPage <= 1) {
+			_this.nowPage = 1;
+			$(_this.preBtn).addClass("disabled");
+		} else {
+			$(_this.preBtn).removeClass("disabled");
+		}
+		// 判断是否有后一页
+		if (_this.nowPage >= _this.totalPage) {
+			_this.nowPage = _this.totalPage;
+			$(_this.nextBtn).addClass("disabled");
+		} else {
+			$(_this.nextBtn).removeClass("disabled");
+		}
+
+		// 页面上显示当前页码
+		$("#list_now_num").html(_this.nowPage);
+
+		// 赋值当页数据
+		for (var i = (_this.nowPage - 1) * _this.limitList; i < _this.nowPage * _this.limitList; i++) {
+			// 防止没有数据
+			if (!_this.datas[i]) {break;}
+			list.value.push(_this.datas[i]);
+		}
+		var addHtml = template('test', list);
+		document.getElementById('content').innerHTML = addHtml;
 	}
+};
+
+// 检验输入的是否都是数字
+function checkNum(num) {
+	return /^[1-9][0-9]*$/.test(num);
 }
 
 $(function() {
-	// 初始化选择服务名, 参数一: 触发元素, 参数二: 起始加载页数, 参数三: 每页加载条数
-	loadService.init($("#choose-service"), 1, 10);
+	// limitService: 每页显示服务名条数, limitList: 每页显示数据条数
+	var limitService = 5, limitList = 20;
+	
+	// 初始化选择服务名, 参数一: 触发元素, 参数二: 每页加载条数
+	loadService.init($("#service_name"), limitService);
 
-	// 初始化查询列表, 参数一: 搜索按钮, 参数二: “上一页”按钮, 参数三: “下一页”按钮, 参数四: 起始加载页数, 参数五: 每页加载条数
-	loadList.init($("#search"), $("#list_pre_btn"), $("#list_next_btn"), 1, 20);
+	// 初始化查询列表, 参数一: 搜索按钮, 参数二: “上一页”按钮, 参数三: “下一页”按钮, 参数四: 每页加载条数
+	loadPage.init($("#search"), $("#list_pre_btn"), $("#list_next_btn"), limitList);
+	
 
 	//日期插件初始化
 	$('.form_datetime').datetimepicker({
 		format:'yyyy-mm-dd hh:ii:ss',
 		autoclose: 1,
 		todayBtn:  1
-		// minuteStep:1,
-		// format:'yyyy-mm-dd hh:ii:ss',
-		// pickTime: true,
-		// pickDate: true,
-		// weekStart: 1,
-		// todayBtn:  1,
-		// autoclose: 1,
-		// todayHighlight: 1,
-		// startView: 2,
-		// forceParse: 0,
-		// showMeridian: true
 	});
 
 	// 点击表格弹出d3树

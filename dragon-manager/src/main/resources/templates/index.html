@@ -14,7 +14,7 @@
 <!-- 网页头部 -->
 <header class="navbar navbar-default navbar-fixed-top">
     <div class="wrap">
-        <div class="logo"><img src="/images/logo.png"/><span>Dragon</span></div>
+        <div class="logo"><img src="images/logo.png"/><span>Dragon</span></div>
     </div>
 </header>
 
@@ -22,7 +22,7 @@
     <!-- 搜索栏 -->
     <nav class="searchbar">
         <div class="wrap searchbar-nav">
-            <div id="choose-service" class="btn-group">
+            <div class="btn-group">
                 <div class="btn btn-default">
                     <input type="text" id="service_name" data-service="" placeholder="服务名"
                            style="width: 280px;"/>
@@ -60,13 +60,34 @@
                     </tbody>
                 </table>
 
-                <!-- 分页 -->
+                <!-- 表格底部信息 -->
                 <div class="table-footer clearFix">
+                    <!-- <div class="footer-data">
+                        <span>每页展示</span>
+                        <select class="select-num">
+                            <option>5000</option>
+                            <option>10000</option>
+                        </select>
+                        <span>条数据</span>
+                    </div> -->
+                    <div class="footer-data" style="display: none;">从 1 到 <span
+                            id="totalPage">1</span> 总共 <strong id="totalList">1</strong> 条数据
+                    </div>
+
+                    <!-- 分页 -->
                     <nav class="nav-pagination clearFix">
                         <div id="list_pre_btn" class="btn-pagination disabled"><span
                                 class="glyphicon glyphicon-triangle-left"></span></div>
+
+                        <div id="list_now_num" class="num-pagination active">1</div>
+
                         <div id="list_next_btn" class="btn-pagination disabled"><span
                                 class="glyphicon glyphicon-triangle-right"></span></div>
+                        <div class="turn">
+                            <span>跳转到</span>
+                            <input type="text" id="turnPage" class="form-control"/>
+                            <div class="btn-turn">GO</div>
+                        </div>
                     </nav>
                 </div>
             </div>
@@ -88,16 +109,15 @@
     </tr>
     {{/each}}
 </script>
-<script type="text/javascript" src="/js/jquery/jquery-1.12.4.min.js"></script>
-<script type="text/javascript" src="/js/bootstrap/bootstrap.min.js"></script>
-<script type="text/javascript"
-        src="/js/bootstrap/bootstrap-datetimepicker.min.js"></script>
-<script type="text/javascript" src="/js/bootstrap/bootstrap-datetimepicker.fr.js"></script>
-<script type="text/javascript" src="/js/d3.js"></script>
-<script type="text/javascript" src="/js/template.js"></script>
+<script type="text/javascript" src="js/jquery/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/bootstrap/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="js/bootstrap/bootstrap-datetimepicker.fr.js"></script>
+<script type="text/javascript" src="js/d3.js"></script>
+<script type="text/javascript" src="js/template.js"></script>
 <!-- 配置地址文件 -->
-<script type="text/javascript" src="/js/net.js"></script>
-<script type="text/javascript" src="/js/index.js"></script>
+<script type="text/javascript" src="js/net.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
 </body>
 </html>
 

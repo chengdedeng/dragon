@@ -6,7 +6,7 @@ ul > li{list-style: none}
 /** 清浮动 **/
 .clearFix:after, .clearFix:before{content: ''; display: block; clear: both;}
 
-.wrap{margin: 0 auto; padding-left: 10px; padding-right: 10px; width: 80%; min-width: 1280px; max-width: 1440px; box-sizing: border-box;}
+.wrap{margin: 0 auto; padding-left: 10px; padding-right: 10px; width: 80%; min-width: 1240px; max-width: 1440px; box-sizing: border-box;}
 
 /** ~~~~~~~~~~ 头部 ~~~~~~~~~~ **/
 .navbar{font-size: 32px; line-height: 50px; color: #fff; border-bottom: none;}
@@ -23,7 +23,7 @@ ul > li{list-style: none}
 /** "搜索"按钮 **/
 .btn-search{padding: 5px 16px; width: 54px; height: 34px; font-size: 20px; color: #fff; background-color: #e45057; cursor: pointer;}
 
-.page-container{margin-top: 130px;}
+.page-container{margin-top: 135px; padding-bottom: 20px;}
 
 /** ~~~~~~~~~~ 表格 ~~~~~~~~~~ **/
 .body-table{padding: 10px; background-color: #fff; border: solid #e6e6e6 1px;}
@@ -40,11 +40,25 @@ ul > li{list-style: none}
 .table-footer .select-num{margin: 0 10px; padding: 5px 5px; border: solid #e6e6e6 1px;}
 
 /** ~~~~~~~~~~ 分页 ~~~~~~~~~~ **/
-.nav-pagination{float: right;margin-right: 10px}
-.btn-pagination{float: left; margin: 0 5px; padding: 5px 7px; width: 30px; height: 30px; background-color: #fff; border: solid #e6e6e6 1px; cursor: pointer;}
+.nav-pagination{float: right;}
+.btn-pagination, .num-pagination, .more-pagination{float: left; margin: 0 5px; padding: 5px 0; width: 30px; height: 30px; text-align: center; background-color: #fff; border: solid #e6e6e6 1px; cursor: pointer;}
+/** "上一页"/"下一页"按钮 **/
+.btn-pagination{padding-right: 7px; padding-left: 7px;}
 .btn-pagination:first-child{margin-left: 0;}
 .btn-pagination:last-child{margin-right: 0;}
 .btn-pagination.disabled{color: #e6e6e6; cursor: no-drop;}
+
+.pagination{float: left; margin: 0;}
+/** 页数按钮 **/
+.num-pagination{}
+.num-pagination.active{color: #fff; background-color: #e45057; border-color: #e45057; cursor: default;}
+/** ... **/
+.more-pagination{width: auto; border: none;}
+/** 跳转 **/
+.turn{float: right; margin-left: 10px;}
+.turn > span{float: left; padding: 5px 0;}
+.turn .form-control{float: left; margin: 0 10px; padding: 5px; width: 50px; height: 30px; text-align: center;}
+.turn .btn-turn{float: left; display: block; padding: 7px 10px; height: 30px; font-size: 12px; color: #fff; background-color: #e45057; cursor: pointer;}
 
 /** ~~~~~~~~~~ 弹出层 ~~~~~~~~~~ **/
 .popup-cover{display: none; position: fixed; z-index: 1900; top: 0; right: 0; bottom: 0; left: 0; background-color: rgba(0,0,0,.7);}
