@@ -5,7 +5,9 @@ import info.yangguo.dragon.storage.mysql.dao.pojo.SpanPojo;
 
 import org.mybatis.spring.SqlSessionTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SpanMapperImpl implements SpanMapper {
     private SqlSessionTemplate sqlSession;
@@ -25,7 +27,10 @@ public class SpanMapperImpl implements SpanMapper {
     }
 
     @Override
-    public void deleteSpan(String spanId) {
-        sqlSession.delete("deleteSpanById", spanId);
+    public void deleteSpan(String spanId,String traceId) {
+        Map map=new HashMap();
+        map.put("spanId",spanId);
+        map.put("traceId",traceId);
+        sqlSession.delete("deleteSpanById", map);
     }
 }

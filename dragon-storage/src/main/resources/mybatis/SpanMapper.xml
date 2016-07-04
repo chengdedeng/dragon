@@ -9,7 +9,7 @@
     <select id="getSpanByTraceId" parameterType="String" resultType="SpanPojo">
         SELECT * FROM span where traceId=#{traceId}
     </select>
-    <delete id="deleteSpanById" parameterType="String">
+    <delete id="deleteSpanById" parameterType="Map">
         DELETE  FROM span WHERE spanId=#{spanId} and traceId=#{traceId}
     </delete>
 </mapper>

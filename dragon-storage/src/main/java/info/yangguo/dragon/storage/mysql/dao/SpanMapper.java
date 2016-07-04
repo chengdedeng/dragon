@@ -10,5 +10,5 @@ public interface SpanMapper {
 
     List<SpanPojo> getSpanByTraceId(String traceId);
 
-    void deleteSpan(String spanId);
+    void deleteSpan(String spanId,String traceId);
 }

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -48,7 +49,7 @@ public class ScheduleDeleteService {
         //由于没有事务,逻辑的设计严重依赖来于顺序
         for (SpanPojo spanPojo : spanPojos) {
             annotationMapper.deleteAnnotation(spanPojo.getSpanId(), traceId);
-            spanMapper.deleteSpan(spanPojo.getSpanId());
+            spanMapper.deleteSpan(spanPojo.getSpanId(), traceId);
         }
         traceMapper.deleteTrace(traceId);
     }
@@ -56,14 +57,18 @@ public class ScheduleDeleteService {
     private void process() {
         int count = 0;
         while (true) {
-            List<String> traceIds = traceMapper.getTraceId(new Date().getTime() - configuration.getLifeTime() * 24 * 60 * 60 * 1000, limit);
-            count += traceIds.size();
-            for (String traceId : traceIds) {
+            List<String> traceId1 = traceMapper.getTraceId(new Date().getTime() - configuration.getLifeTime() * 24 * 60 * 60 * 1000, limit);
+            HashSet<String> traceIds2=new HashSet<>();
+            for(String traceId:traceId1){
+                traceIds2.add(traceId);
+            }
+            count += traceIds2.size();
+            for (String traceId : traceIds2) {
                 List<SpanPojo> spanPojos = spanMapper.getSpanByTraceId(traceId);
                 delete(traceId, spanPojos);
             }
 
-            if (traceIds.size() < limit) {
+            if (traceId1.size() < limit) {
                 break;
             }
         }
