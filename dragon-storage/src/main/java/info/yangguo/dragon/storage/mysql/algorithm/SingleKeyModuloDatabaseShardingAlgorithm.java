@@ -22,13 +22,15 @@ import com.google.common.hash.Hashing;
 import com.dangdang.ddframe.rdb.sharding.api.ShardingValue;
 import com.dangdang.ddframe.rdb.sharding.api.strategy.database.SingleKeyDatabaseShardingAlgorithm;
 
+import info.yangguo.dragon.storage.mysql.PropertiesUtil;
+
 import java.util.Collection;
 
 public final class SingleKeyModuloDatabaseShardingAlgorithm implements SingleKeyDatabaseShardingAlgorithm<String> {
-
+    private static int dbSum = Integer.parseInt(PropertiesUtil.getProperty("mysql.properties").get("database.sum"));
     @Override
     public String doEqualSharding(final Collection<String> availableTargetNames, final ShardingValue<String> shardingValue) {
-        int index = Hashing.consistentHash(Hashing.murmur3_32().hashBytes(shardingValue.getValue().getBytes()), 3);
+        int index = Hashing.consistentHash(Hashing.murmur3_32().hashBytes(shardingValue.getValue().getBytes()), dbSum);
         for (String each : availableTargetNames) {
             if (each.endsWith(index + "")) {
                 return each;

@@ -85,7 +85,7 @@
                     <daemons>
                         <daemon>
                             <id>dragon-collector</id>
-                            <mainClass>info.yangguo.dragon.collector.CollectorMain</mainClass>
+                            <mainClass>info.yangguo.dragon.collector.Application</mainClass>
                             <platforms>
                                 <platform>jsw</platform>
                             </platforms>
