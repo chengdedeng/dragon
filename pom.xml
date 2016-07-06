@@ -15,32 +15,6 @@
         <module>dragon-manager</module>
         <module>dragon-storage</module>
     </modules>
-    <profiles>
-        <!-- 开发环境 -->
-        <profile>
-            <id>develop</id>
-            <properties>
-                <env.type>develop</env.type>
-            </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <!--测试环境-->
-        <profile>
-            <id>test</id>
-            <properties>
-                <env.type>test</env.type>
-            </properties>
-        </profile>
-        <!-- 生产正式环境 -->
-        <profile>
-            <id>product</id>
-            <properties>
-                <env.type>product</env.type>
-            </properties>
-        </profile>
-    </profiles>
     <properties>
         <info.yangguo.dragon>1.0-SNAPSHOT</info.yangguo.dragon>
         <org.springframework>4.2.5.RELEASE</org.springframework>

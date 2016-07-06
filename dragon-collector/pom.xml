@@ -44,15 +44,7 @@
         <defaultGoal>package</defaultGoal>
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>**/config/</exclude>
-                </excludes>
-            </resource>
-            <resource>
-                <directory>src/main/resources/config/${env.type}</directory>
-                <targetPath>${project.build.outputDirectory}/</targetPath>
-                <filtering>true</filtering>
+                <directory>src/main/resources/config</directory>
             </resource>
         </resources>
         <plugins>
@@ -77,7 +69,7 @@
                     <repositoryName>lib</repositoryName>
                     <configurationDirectory>conf</configurationDirectory>
                     <copyConfigurationDirectory>true</copyConfigurationDirectory>
-                    <configurationSourceDirectory>src/main/resources/config/${env.type}
+                    <configurationSourceDirectory>src/main/resources/config
                     </configurationSourceDirectory>
                     <includeConfigurationDirectoryInClasspath>true
                     </includeConfigurationDirectoryInClasspath>
