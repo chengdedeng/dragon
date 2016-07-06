@@ -10,13 +10,13 @@
     </formats>
     <fileSets>
         <fileSet>
-            <directory>target/jsw/dargon-collector</directory>
+            <directory>target/jsw/dragon-collector</directory>
             <outputDirectory>/</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
         <!--主要是为了appassembler-maven-plugin插件保存PID和日志所用-->
         <fileSet>
-            <directory>target/jsw/dargon-collector</directory>
+            <directory>target/jsw/dragon-collector</directory>
             <outputDirectory>/logs</outputDirectory>
             <excludes>
                 <exclude>**/*</exclude>

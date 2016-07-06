@@ -171,7 +171,6 @@
                 </executions>
                 <configuration>
                     <descriptor>assembly/bin.xml</descriptor>
-                    <outputDirectory>${project.parent.build.directory}</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

@@ -84,12 +84,12 @@
                     <target>${project.build.directory}</target>
                     <daemons>
                         <daemon>
-                            <id>dargon-collector</id>
+                            <id>dragon-collector</id>
                             <mainClass>info.yangguo.dragon.collector.CollectorMain</mainClass>
                             <platforms>
                                 <platform>jsw</platform>
                             </platforms>
-                            <wrapperLogFile>logs/dargon-collector.log</wrapperLogFile>
+                            <wrapperLogFile>logs/dragon-collector.log</wrapperLogFile>
                             <generatorConfigurations>
                                 <generatorConfiguration>
                                     <generator>jsw</generator>
