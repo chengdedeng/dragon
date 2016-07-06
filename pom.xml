@@ -266,14 +266,14 @@
 
     <distributionManagement>
         <repository>
-            <id>group-releases</id>
+            <id>releases</id>
             <name>Nexus Release Repository</name>
-            <url>http://172.16.3.133:8081/nexus/content/repositories/releases/</url>
+            <url>http://10.11.25.246:8081/nexus/content/repositories/releases</url>
         </repository>
         <snapshotRepository>
-            <id>group-snapshots</id>
+            <id>snapshots</id>
             <name>Nexus Snapshot Repository</name>
-            <url>http://172.16.3.133:8081/nexus/content/repositories/snapshots</url>
+            <url>http://10.11.25.246:8081/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 </project>
