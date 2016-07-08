@@ -31,9 +31,11 @@ import info.yangguo.dragon.common.dto.SpanDto;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @author:杨果
@@ -124,6 +126,7 @@ public class DragonFilter implements Filter {
     }
 
     private void invokerBefore(Invocation invocation, SpanDto spanDto, String ip, int port, long start) {
+        MDC.put("traceId", spanDto.getTraceId());
         if (checkFilter(invocation)) {
             RpcContext context = RpcContext.getContext();
             String app = context.getUrl().getParameter("application");
@@ -145,6 +148,7 @@ public class DragonFilter implements Filter {
                 tracer.serverSendRecord(spanDto, ip, port, end, app);
             }
         }
+        MDC.remove("traceId");
     }
 
 
