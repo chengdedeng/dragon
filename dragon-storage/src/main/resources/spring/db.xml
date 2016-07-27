@@ -4,10 +4,6 @@
        xmlns:rdb="http://www.dangdang.com/schema/ddframe/rdb"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                         http://www.springframework.org/schema/beans/spring-beans.xsd
-
-
-
-
                         http://www.dangdang.com/schema/ddframe/rdb
                         http://www.dangdang.com/schema/ddframe/rdb/rdb.xsd">
 
@@ -94,15 +90,7 @@
     <rdb:strategy id="tableShardingStrategy" sharding-columns="traceId"
                   algorithm-class="info.yangguo.dragon.storage.mysql.algorithm.SingleKeyModuloTableShardingAlgorithm"/>
 
-    <rdb:data-source id="shardingDataSource1">
-        <rdb:sharding-rule data-sources="ds_0">
-            <rdb:table-rules>
-                <rdb:table-rule logic-table="service" actual-tables="service"/>
-            </rdb:table-rules>
-        </rdb:sharding-rule>
-    </rdb:data-source>
-    
-    <rdb:data-source id="shardingDataSource2">
+    <rdb:data-source id="shardingDataSource">
         <rdb:sharding-rule data-sources="ds_0,ds_1,ds_2">
             <rdb:table-rules>
                 <rdb:table-rule logic-table="trace" actual-tables="trace${0..9}"
@@ -119,13 +107,12 @@
     </rdb:data-source>
 
 
-
     <bean id="sqlSessionFactoryBean1" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="shardingDataSource1"/>
+        <property name="dataSource" ref="ds_0_master"/>
         <property name="configLocation" value="classpath:mybatis/mybatis-config1.xml"/>
     </bean>
     <bean id="sqlSessionFactoryBean2" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="shardingDataSource2"/>
+        <property name="dataSource" ref="shardingDataSource"/>
         <property name="configLocation" value="classpath:mybatis/mybatis-config2.xml"/>
     </bean>
 
