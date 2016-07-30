@@ -14,6 +14,7 @@ import info.yangguo.dragon.manager.dto.DragonTraceRequest;
 import info.yangguo.dragon.manager.vo.NodeVo;
 import info.yangguo.dragon.manager.vo.ResultVo;
 import info.yangguo.dragon.manager.vo.TraceVo;
+import info.yangguo.dragon.storage.mysql.PropertiesUtil;
 import info.yangguo.dragon.storage.mysql.dao.AnnotationMapper;
 import info.yangguo.dragon.storage.mysql.dao.ServiceMapper;
 import info.yangguo.dragon.storage.mysql.dao.SpanMapper;
@@ -56,6 +57,7 @@ import java.util.regex.Pattern;
 @Api(value = "trace", description = "trace api")
 public class TraceController {
     private static Logger logger = LoggerFactory.getLogger(TraceController.class);
+    private static int timeConfine = Integer.parseInt(PropertiesUtil.getProperty("dragon.properties").get("select.time.confine"));
     LoadingCache<String, TraceVo> cache = CacheBuilder.newBuilder()
             .maximumSize(100000)
             .expireAfterWrite(10, TimeUnit.MINUTES)
@@ -97,7 +99,7 @@ public class TraceController {
         resultVo.setCode(ResultCode.C200.getCode());
         List<TraceVo> traceVos = new ArrayList<>();
         resultVo.setValue(traceVos);
-        List<String> traceIds = traceMapper.getTraceIdByServiceId(dragonTraceRequest.getServiceId(), dragonTraceRequest.getTraceTime());
+        List<String> traceIds = traceMapper.getTraceIdByServiceId(dragonTraceRequest.getServiceId(), dragonTraceRequest.getTraceTime(), dragonTraceRequest.getTraceTime() + timeConfine);
         for (String traceId : traceIds) {
             try {
                 TraceVo traceVo = cache.get(dragonTraceRequest.getServiceId() + "-" + traceId);

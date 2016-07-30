@@ -13,7 +13,7 @@
         <property name="ignoreUnresolvablePlaceholders" value="true"/>
         <property name="locations">
             <list>
-                <value>classpath:mysql.properties</value>
+                <value>classpath:db.properties</value>
             </list>
         </property>
     </bean>

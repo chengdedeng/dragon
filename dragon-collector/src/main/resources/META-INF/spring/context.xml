@@ -12,7 +12,7 @@
 
     <bean id="configuration"
           class="info.yangguo.dragon.storage.mysql.Configuration">
-        <property name="queueSize" value="${collector.mysql.queueSize}"/>
+        <property name="queueSize" value="${collector.queueSize}"/>
     </bean>
     <!--根据存储不同可以选择不同的insert service-->
     <bean id="insertService"

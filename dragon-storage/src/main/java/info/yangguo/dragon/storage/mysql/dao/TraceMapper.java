@@ -9,7 +9,7 @@ public interface TraceMapper {
 
     List<String> getTraceId(long beginTime, int limit);
 
-    List<String> getTraceIdByServiceId(int serviceId, long beginTime);
+    List<String> getTraceIdByServiceId(int serviceId, long beginTime, long endTime);
 
     void deleteTrace(String traceId);
 }

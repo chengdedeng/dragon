@@ -27,7 +27,7 @@ import info.yangguo.dragon.storage.mysql.PropertiesUtil;
 import java.util.Collection;
 
 public final class SingleKeyModuloTableShardingAlgorithm implements SingleKeyTableShardingAlgorithm<String> {
-    private static int tbSum = Integer.parseInt(PropertiesUtil.getProperty("mysql.properties").get("table.sum"));
+    private static int tbSum = Integer.parseInt(PropertiesUtil.getProperty("db.properties").get("table.sum"));
 
     @Override
     public String doEqualSharding(final Collection<String> availableTargetNames, final ShardingValue<String> shardingValue) {

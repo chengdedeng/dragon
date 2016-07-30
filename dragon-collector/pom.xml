@@ -118,6 +118,18 @@
                                             <name>wrapper.startup.timeout</name>
                                             <value>300</value>
                                         </property>
+                                        <property>
+                                            <name>wrapper.logfile.maxsize</name>
+                                            <value>10m</value>
+                                        </property>
+                                        <property>
+                                            <name>wrapper.console.format</name>
+                                            <value>M</value>
+                                        </property>
+                                        <property>
+                                            <name>wrapper.logfile.format</name>
+                                            <value>M</value>
+                                        </property>
                                     </configuration>
                                 </generatorConfiguration>
                             </generatorConfigurations>
