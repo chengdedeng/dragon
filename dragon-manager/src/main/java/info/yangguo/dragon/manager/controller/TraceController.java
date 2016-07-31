@@ -158,6 +158,13 @@ public class TraceController {
             }
         }
 
+        HashSet<String> lastNodeId = new HashSet<>();
+        for (Map.Entry<String, NodeVo> entry : nodeVoMap.entrySet()) {
+            if (entry.getValue().getChildren().size() == 0) {
+                lastNodeId.add(entry.getValue().getId());
+            }
+        }
+
         //迭代span,完善树的属性
         for (SpanPojo spanPojo : spanPojos) {
             String pid = spanPojo.getParentId();
@@ -219,6 +226,10 @@ public class TraceController {
                 if (serviceId >= 0 && spanPojo.getServiceId() == serviceId) {
                     traceVo.setChooseTime(invokeTime);
                 }
+            }
+            if (lastNodeId.contains(id)) {
+                long invokeTime = annotationTypeMap.SSAnnotationPojo.getTime() - annotationTypeMap.SRAnnotationPojo.getTime();
+                nodeVoMap.get(id).setInvokeTime(invokeTime);
             }
             //client端异常
             HashSet<String> ces = new HashSet<>();

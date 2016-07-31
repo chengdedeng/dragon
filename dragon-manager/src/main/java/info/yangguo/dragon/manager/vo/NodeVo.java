@@ -29,7 +29,7 @@ public class NodeVo {
     @ApiModelProperty("节点ip:端口")
     private String address;
     @ApiModelProperty("方法执行时间")
-    private long invokeTime;
+    private long invokeTime=-1;
     @ApiModelProperty("网络耗时")
     private String networkTime;
     @ApiModelProperty("异常信息")
