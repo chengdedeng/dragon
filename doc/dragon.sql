@@ -11,7 +11,7 @@ CREATE TABLE `annotation0` (
   `port` int(4) DEFAULT NULL,
   `time` bigint(8) DEFAULT NULL,
   `spanId` varchar(32) NOT NULL,
-  `value` varchar(2500) DEFAULT NULL,
+  `value` text DEFAULT NULL,
   `app` varchar(50) NOT NULL,
   `traceId` varchar(32) NOT NULL,
   KEY `spanIdIndex` (`spanId`) USING BTREE
@@ -24,7 +24,7 @@ CREATE TABLE `annotation1` (
   `port` int(4) DEFAULT NULL,
   `time` bigint(8) DEFAULT NULL,
   `spanId` varchar(32) NOT NULL,
-  `value` varchar(2500) DEFAULT NULL,
+  `value` text DEFAULT NULL,
   `app` varchar(50) NOT NULL,
   `traceId` varchar(32) NOT NULL,
   KEY `spanIdIndex` (`spanId`) USING BTREE
@@ -38,7 +38,7 @@ CREATE TABLE `annotation2` (
   `port` int(4) DEFAULT NULL,
   `time` bigint(8) DEFAULT NULL,
   `spanId` varchar(32) NOT NULL,
-  `value` varchar(2500) DEFAULT NULL,
+  `value` text DEFAULT NULL,
   `app` varchar(50) NOT NULL,
   `traceId` varchar(32) NOT NULL,
   KEY `spanIdIndex` (`spanId`) USING BTREE
@@ -52,7 +52,7 @@ CREATE TABLE `annotation3` (
   `port` int(4) DEFAULT NULL,
   `time` bigint(8) DEFAULT NULL,
   `spanId` varchar(32) NOT NULL,
-  `value` varchar(2500) DEFAULT NULL,
+  `value` text DEFAULT NULL,
   `app` varchar(50) NOT NULL,
   `traceId` varchar(32) NOT NULL,
   KEY `spanIdIndex` (`spanId`) USING BTREE
@@ -66,7 +66,7 @@ CREATE TABLE `annotation4` (
   `port` int(4) DEFAULT NULL,
   `time` bigint(8) DEFAULT NULL,
   `spanId` varchar(32) NOT NULL,
-  `value` varchar(2500) DEFAULT NULL,
+  `value` text DEFAULT NULL,
   `app` varchar(50) NOT NULL,
   `traceId` varchar(32) NOT NULL,
   KEY `spanIdIndex` (`spanId`) USING BTREE
@@ -80,7 +80,7 @@ CREATE TABLE `annotation5` (
   `port` int(4) DEFAULT NULL,
   `time` bigint(8) DEFAULT NULL,
   `spanId` varchar(32) NOT NULL,
-  `value` varchar(2500) DEFAULT NULL,
+  `value` text DEFAULT NULL,
   `app` varchar(50) NOT NULL,
   `traceId` varchar(32) NOT NULL,
   KEY `spanIdIndex` (`spanId`) USING BTREE
@@ -94,7 +94,7 @@ CREATE TABLE `annotation6` (
   `port` int(4) DEFAULT NULL,
   `time` bigint(8) DEFAULT NULL,
   `spanId` varchar(32) NOT NULL,
-  `value` varchar(2500) DEFAULT NULL,
+  `value` text DEFAULT NULL,
   `app` varchar(50) NOT NULL,
   `traceId` varchar(32) NOT NULL,
   KEY `spanIdIndex` (`spanId`) USING BTREE
@@ -108,7 +108,7 @@ CREATE TABLE `annotation7` (
   `port` int(4) DEFAULT NULL,
   `time` bigint(8) DEFAULT NULL,
   `spanId` varchar(32) NOT NULL,
-  `value` varchar(2500) DEFAULT NULL,
+  `value` text DEFAULT NULL,
   `app` varchar(50) NOT NULL,
   `traceId` varchar(32) NOT NULL,
   KEY `spanIdIndex` (`spanId`) USING BTREE
@@ -122,7 +122,7 @@ CREATE TABLE `annotation8` (
   `port` int(4) DEFAULT NULL,
   `time` bigint(8) DEFAULT NULL,
   `spanId` varchar(32) NOT NULL,
-  `value` varchar(2500) DEFAULT NULL,
+  `value` text DEFAULT NULL,
   `app` varchar(50) NOT NULL,
   `traceId` varchar(32) NOT NULL,
   KEY `spanIdIndex` (`spanId`) USING BTREE
@@ -136,7 +136,7 @@ CREATE TABLE `annotation9` (
   `port` int(4) DEFAULT NULL,
   `time` bigint(8) DEFAULT NULL,
   `spanId` varchar(32) NOT NULL,
-  `value` varchar(2500) DEFAULT NULL,
+  `value` text DEFAULT NULL,
   `app` varchar(50) NOT NULL,
   `traceId` varchar(32) NOT NULL,
   KEY `spanIdIndex` (`spanId`) USING BTREE
