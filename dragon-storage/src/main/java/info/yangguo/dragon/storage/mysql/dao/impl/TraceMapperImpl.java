@@ -20,7 +20,6 @@ import info.yangguo.dragon.storage.mysql.dao.TraceMapper;
 import info.yangguo.dragon.storage.mysql.dao.pojo.TracePojo;
 
 import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.dao.DuplicateKeyException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,10 +33,7 @@ public class TraceMapperImpl implements TraceMapper {
     }
 
     public void addTrace(TracePojo tracePojo) {
-        try {
-            sqlSession.insert("addTrace", tracePojo);
-        } catch (DuplicateKeyException e) {
-        }
+        sqlSession.insert("addTrace", tracePojo);
     }
 
     @Override
@@ -50,11 +46,11 @@ public class TraceMapperImpl implements TraceMapper {
 
 
     @Override
-    public List<String> getTraceIdByServiceId(int serviceId, long beginTime,long endTime) {
+    public List<String> getTraceIdByServiceId(int serviceId, long beginTime, long endTime) {
         Map map = new HashMap();
         map.put("serviceId", serviceId);
         map.put("beginTime", beginTime);
-        map.put("endTime",endTime);
+        map.put("endTime", endTime);
         return sqlSession.selectList("getTraceIdByServiceId", map);
     }
 

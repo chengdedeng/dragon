@@ -1,5 +1,8 @@
 package info.yangguo.dragon.storage.mysql;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 import info.yangguo.dragon.common.dto.AnnotationDto;
 import info.yangguo.dragon.common.dto.AnnotationType;
 import info.yangguo.dragon.common.dto.SpanDto;
@@ -13,19 +16,25 @@ import info.yangguo.dragon.storage.mysql.dao.pojo.ServicePojo;
 import info.yangguo.dragon.storage.mysql.dao.pojo.SpanPojo;
 import info.yangguo.dragon.storage.mysql.dao.pojo.TracePojo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class InsertMysqlServiceImpl implements InsertService {
+    private static Logger logger = LoggerFactory.getLogger(InsertMysqlServiceImpl.class);
     private ArrayBlockingQueue<List<SpanDto>> queue;
     private static final int taskCount = Runtime.getRuntime().availableProcessors();
-    private static final ExecutorService executors = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private static final ConcurrentHashMap<String, Integer> serviceMap = new ConcurrentHashMap<>();
+    private static Cache<String, Boolean> cache = CacheBuilder.newBuilder()
+            .maximumSize(100000)
+            .expireAfterWrite(30, TimeUnit.SECONDS)
+            .build();
+
 
     private AnnotationMapper annotationMapper;
     private ServiceMapper serviceMapper;
@@ -38,9 +47,11 @@ public class InsertMysqlServiceImpl implements InsertService {
 
     public InsertMysqlServiceImpl(Configuration configuration) {
         int queueSize = configuration.getQueueSize() == 0 ? 2048 : configuration.getQueueSize();
-        queue = new ArrayBlockingQueue<List<SpanDto>>(queueSize);
+        queue = new ArrayBlockingQueue<>(queueSize);
         for (int i = 0; i < taskCount; i++) {
-            executors.execute(new InsertTask());
+            Thread thread = new Thread(new InsertTask());
+            thread.setDaemon(true);
+            thread.start();
         }
     }
 
@@ -96,12 +107,20 @@ public class InsertMysqlServiceImpl implements InsertService {
      * 只有CS Annotation的时候才插入
      */
     private void addTrace(int serviceId, String traceId, long time) {
+        StringBuilder key = new StringBuilder().append(serviceId).append("-").append(traceId);
         TracePojo tracePojo = new TracePojo();
         tracePojo.setServiceId(serviceId);
         tracePojo.setTraceId(traceId);
         tracePojo.setTime(time);
-
-        traceMapper.addTrace(tracePojo);
+        if (!cache.asMap().containsKey(key.toString())) {
+            try {
+                cache.put(key.toString(), true);
+                traceMapper.addTrace(tracePojo);
+            } catch (Exception e) {
+                //在client超时重试的时候,可能会出现Duplicate entry for key 'PRIMARY'异常
+                logger.error(tracePojo.toString(), e);
+            }
+        }
     }
 
     private void addSpan(SpanDto spanDto) {

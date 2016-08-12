@@ -15,6 +15,7 @@
     </logger>
     <logger name="info.yangguo">
         <level value="warn"/>
+        <appender-ref ref="stdout"/>
     </logger>
 
     <root>
