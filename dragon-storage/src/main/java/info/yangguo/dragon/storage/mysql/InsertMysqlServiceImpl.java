@@ -58,6 +58,7 @@ public class InsertMysqlServiceImpl implements InsertService {
     @Override
     public void insert(List<SpanDto> spans) {
         queue.add(spans);
+        logger.info("queus size:{}", queue.size());
     }
 
     private class InsertTask implements Runnable {
@@ -67,6 +68,7 @@ public class InsertMysqlServiceImpl implements InsertService {
                 try {
                     List<SpanDto> spanDtos = queue.take();
                     if (spanDtos != null) {
+                        logger.info(".");
                         for (SpanDto spanDto : spanDtos) {
                             addAnnotation(spanDto);
                         }

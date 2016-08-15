@@ -140,6 +140,8 @@
                                 <maxMemorySize>512M</maxMemorySize>
                                 <extraArguments>
                                     <extraArgument>-server</extraArgument>
+                                    <extraArgument>-XX:PermSize=50M</extraArgument>
+                                    <extraArgument>-XX:MaxPermSize=100M</extraArgument>
                                 </extraArguments>
                             </jvmSettings>
                         </daemon>
