@@ -57,7 +57,7 @@ public class InsertMysqlServiceImpl implements InsertService {
 
     @Override
     public void insert(List<SpanDto> spans) {
-        logger.info("queus size:{}", queue.size());
+        logger.info("queue size:{}", queue.size());
         queue.add(spans);
     }
 
