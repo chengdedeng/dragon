@@ -15,7 +15,7 @@
         <level value="info"/>
     </logger>
     <logger name="info.yangguo">
-        <level value="warn"/>
+        <level value="info"/>
     </logger>
 
     <root>

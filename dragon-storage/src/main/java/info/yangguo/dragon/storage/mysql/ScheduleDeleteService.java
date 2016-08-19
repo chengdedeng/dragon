@@ -72,7 +72,7 @@ public class ScheduleDeleteService {
                 break;
             }
         }
-        logger.warn("本次回收的Trace条数为:{}", count);
+        logger.info("本次回收的Trace条数为:{}", count);
     }
 
     private class DeleteTask implements Runnable {

@@ -15,7 +15,7 @@
     </bean>
 
     <bean id="scheduleDeleteService"
-          class="info.yangguo.dragon.storage.mysql.ScheduleDeleteService" autowire="byType">
+          class="info.yangguo.dragon.storage.mysql.ScheduleDeleteService" autowire="byType" lazy-init="false">
         <constructor-arg ref="configuration"/>
     </bean>
 </beans>
