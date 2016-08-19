@@ -55,11 +55,13 @@ public class ScheduleDeleteService {
     }
 
     private void process() {
+        logger.info("Trace开始回收");
+        long begin = new Date().getTime();
         int count = 0;
         while (true) {
             List<String> traceId1 = traceMapper.getTraceId(new Date().getTime() - configuration.getLifeTime() * 24 * 60 * 60 * 1000, limit);
-            HashSet<String> traceIds2=new HashSet<>();
-            for(String traceId:traceId1){
+            HashSet<String> traceIds2 = new HashSet<>();
+            for (String traceId : traceId1) {
                 traceIds2.add(traceId);
             }
             count += traceIds2.size();
@@ -72,7 +74,8 @@ public class ScheduleDeleteService {
                 break;
             }
         }
-        logger.info("本次回收的Trace条数为:{}", count);
+        long end = new Date().getTime();
+        logger.info("本次回收的Trace条数为:{},耗时:{}", count, end - begin);
     }
 
     private class DeleteTask implements Runnable {
