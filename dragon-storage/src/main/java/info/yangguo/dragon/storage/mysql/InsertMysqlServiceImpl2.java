@@ -15,20 +15,26 @@ import info.yangguo.dragon.storage.mysql.dao.pojo.AnnotationPojo;
 import info.yangguo.dragon.storage.mysql.dao.pojo.ServicePojo;
 import info.yangguo.dragon.storage.mysql.dao.pojo.SpanPojo;
 import info.yangguo.dragon.storage.mysql.dao.pojo.TracePojo;
+import info.yangguo.dragon.storage.utils.JsonUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.dao.DuplicateKeyException;
 
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-public class InsertMysqlServiceImpl implements InsertService {
-    private static Logger logger = LoggerFactory.getLogger(InsertMysqlServiceImpl.class);
-    private ArrayBlockingQueue<List<SpanDto>> queue;
-    private static final int taskCount = Runtime.getRuntime().availableProcessors();
+/**
+ * @author:杨果
+ * @date:16/9/3 上午9:16
+ *
+ * Description:
+ *
+ */
+public class InsertMysqlServiceImpl2 implements InsertService {
+    private static Logger logger = LoggerFactory.getLogger(InsertMysqlServiceImpl1.class);
     private static final ConcurrentHashMap<String, Integer> serviceMap = new ConcurrentHashMap<>();
     private static Cache<String, Boolean> cache = CacheBuilder.newBuilder()
             .maximumSize(100000)
@@ -40,44 +46,26 @@ public class InsertMysqlServiceImpl implements InsertService {
     private ServiceMapper serviceMapper;
     private SpanMapper spanMapper;
     private TraceMapper traceMapper;
+    private RabbitTemplate rabbitTemplate;
 
 
-    private InsertMysqlServiceImpl() {
-    }
-
-    public InsertMysqlServiceImpl(Configuration configuration) {
-        int queueSize = configuration.getQueueSize() == 0 ? 2048 : configuration.getQueueSize();
-        queue = new ArrayBlockingQueue<>(queueSize);
-        for (int i = 0; i < taskCount; i++) {
-            Thread thread = new Thread(new InsertTask());
-            thread.setDaemon(true);
-            thread.start();
+    public void handleMessage(String trace) {
+        try {
+            List<SpanDto> spanDtoList = (List<SpanDto>) JsonUtil.fromJson(trace);
+            if (spanDtoList != null) {
+                for (SpanDto spanDto : spanDtoList) {
+                    addAnnotation(spanDto);
+                }
+            }
+        } catch (Exception e) {
+            logger.warn("{}", e.getMessage());
         }
     }
 
     @Override
     public void insert(List<SpanDto> spans) {
-        logger.info("queue size:{}", queue.size());
-        queue.add(spans);
-    }
-
-    private class InsertTask implements Runnable {
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    List<SpanDto> spanDtos = queue.take();
-                    if (spanDtos != null) {
-                        logger.info(".");
-                        for (SpanDto spanDto : spanDtos) {
-                            addAnnotation(spanDto);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        String spansJson = JsonUtil.toJson(spans, true);
+        rabbitTemplate.convertAndSend("LogExchange", "trace", spansJson);
     }
 
 
@@ -120,7 +108,7 @@ public class InsertMysqlServiceImpl implements InsertService {
                 traceMapper.addTrace(tracePojo);
             } catch (Exception e) {
                 //在client超时重试的时候,可能会出现Duplicate entry for key 'PRIMARY'异常
-                logger.error(tracePojo.toString(), e);
+                logger.warn("{}", e.getMessage());
             }
         }
     }
@@ -157,7 +145,6 @@ public class InsertMysqlServiceImpl implements InsertService {
         }
     }
 
-
     public AnnotationMapper getAnnotationMapper() {
         return annotationMapper;
     }
@@ -188,5 +175,13 @@ public class InsertMysqlServiceImpl implements InsertService {
 
     public void setTraceMapper(TraceMapper traceMapper) {
         this.traceMapper = traceMapper;
+    }
+
+    public RabbitTemplate getRabbitTemplate() {
+        return rabbitTemplate;
+    }
+
+    public void setRabbitTemplate(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
     }
 }

@@ -205,6 +205,16 @@
                 <artifactId>sharding-jdbc-config-spring</artifactId>
                 <version>${sharding-jdbc.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.amqp</groupId>
+                <artifactId>spring-rabbit</artifactId>
+                <version>1.5.6.RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>1.9.13</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
