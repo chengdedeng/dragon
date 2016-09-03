@@ -3,22 +3,48 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 	http://code.alibabatech.com/schema/dubbo
-	http://code.alibabatech.com/schema/dubbo/dubbo.xsd"
+	http://code.alibabatech.com/schema/dubbo/dubbo.xsd http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd"
        default-autowire="byType">
     <import resource="classpath*:spring/db.xml"/>
-
-    <bean id="configuration"
-          class="info.yangguo.dragon.storage.mysql.Configuration">
-        <property name="queueSize" value="${collector.queueSize}"/>
-    </bean>
     <!--根据存储不同可以选择不同的insert service-->
-    <bean id="insertService"
-          class="info.yangguo.dragon.storage.mysql.InsertMysqlServiceImpl">
-        <constructor-arg ref="configuration"/>
-    </bean>
+    <!--JVM ArrayBlockingQueue-->
+    <!--<bean id="configuration"-->
+    <!--class="info.yangguo.dragon.storage.mysql.Configuration">-->
+    <!--<property name="queueSize" value="${collector.queueSize}"/>-->
+    <!--</bean>-->
+    <!--<bean id="insertService"-->
+    <!--class="info.yangguo.dragon.storage.mysql.InsertMysqlServiceImpl1">-->
+    <!--<constructor-arg ref="configuration"/>-->
+    <!--</bean>-->
+    <!--JVM ArrayBlockingQueue-->
+    <!--走消息队列-->
+    <rabbit:connection-factory id="rabbitConnectionFactory"
+                               addresses="${rabbitmq.address}"
+                               username="${rabbitmq.username}"
+                               password="${rabbitmq.password}"/>
+
+    <rabbit:template id="rabbitTemplate" connection-factory="rabbitConnectionFactory"
+                     exchange="LogExchange"
+                     routing-key="trace"/>
+
+    <rabbit:admin connection-factory="rabbitConnectionFactory"/>
+    <rabbit:queue name="traceQueue"/>
+    <rabbit:topic-exchange name="LogExchange">
+        <rabbit:bindings>
+            <rabbit:binding queue="traceQueue" pattern="trace"/>
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
+
+    <rabbit:listener-container connection-factory="rabbitConnectionFactory">
+        <rabbit:listener ref="insertService" method="handleMessage" queue-names="traceQueue"/>
+    </rabbit:listener-container>
+    <!--走消息队列-->
+
+    <bean id="insertService" class="info.yangguo.dragon.storage.mysql.InsertMysqlServiceImpl2"/>
 
     <bean id="traceServiceImpl" class="info.yangguo.dragon.common.service.impl.TraceServiceImpl">
         <property name="insertService" ref="insertService"/>
