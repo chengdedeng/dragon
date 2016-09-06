@@ -16,4 +16,7 @@
     <select id="getServiceById" parameterType="Long" resultType="ServicePojo">
         SELECT * FROM service WHERE serviceId =#{serviceId}
     </select>
+    <select id="searchServiceByPrefix" parameterType="String" resultType="ServicePojo">
+        SELECT * FROM service where serviceName like concat(#{servicePrefix},'%')
+    </select>
 </mapper>
