@@ -41,4 +41,9 @@ public class ServiceMapperImpl implements ServiceMapper {
     public ServicePojo getServiceById(long serviceId) {
         return sqlSession.selectOne("getServiceById", serviceId);
     }
+
+    @Override
+    public List<ServicePojo> searchServiceByPrefix(String servicePrefix) {
+        return sqlSession.selectList("searchServiceByPrefix", servicePrefix);
+    }
 }

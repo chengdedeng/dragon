@@ -457,7 +457,7 @@ function checkNum(num) {
 
 $(function() {
 	// limitService: 每页显示服务名条数, limitList: 每页显示数据条数
-	var limitService = 5, limitList = 20;
+	var limitService = 10, limitList = 20;
 	
 	// 初始化选择服务名, 参数一: 触发元素, 参数二: 每页加载条数
 	loadService.init($("#service_name"), limitService);

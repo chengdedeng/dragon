@@ -10,7 +10,9 @@ public interface ServiceMapper {
 
     ServicePojo getServiceByName(String name);
 
-    List<ServicePojo> getServiceByOffset(int offset,int limit);
+    List<ServicePojo> getServiceByOffset(int offset, int limit);
 
     ServicePojo getServiceById(long serviceId);
+
+    List<ServicePojo> searchServiceByPrefix(String servicePrefix);
 }
