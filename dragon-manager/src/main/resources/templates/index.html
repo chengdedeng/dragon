@@ -22,25 +22,21 @@
     <!-- 搜索栏 -->
     <nav class="searchbar">
         <div class="wrap searchbar-nav">
-            <div class="btn-group">
+            <div id="choose-service" class="btn-group">
                 <div class="btn btn-default">
-                    <input type="text" id="service_name" data-service="" placeholder="服务名"
-                           style="width: 280px;"/>
+                    <input type="text" id="service_name" placeholder="服务名" style="width: 280px;" />
                 </div>
                 <div class="btn btn-default dropdown-toggle">
-                    <span class="glyphicon glyphicon-arrow-right"></span>
+                    <span class="glyphicon glyphicon-arrow-down"></span>
                 </div>
             </div>
             <div class="btn-group">
-                <div class="btn btn-default"><input type="text" id="start_time"
-                                                    class="form_datetime" placeholder="开始时间"
-                                                    style="width: 165px;"/></div>
+                <div class="btn btn-default"><input type="text" id="start_time" class="form_datetime" placeholder="开始时间" style="width: 165px;" /></div>
                 <div class="btn btn-default dropdown-toggle">
                     <span class="glyphicon glyphicon-th"></span>
                 </div>
             </div>
-            <div id="search" class="btn-group btn-search"><span
-                    class="glyphicon glyphicon-search"></span></div>
+            <div id="search" class="btn-group btn-search"><span class="glyphicon glyphicon-search"></span></div>
         </div>
     </nav>
     <!-- 页面主体 -->
@@ -62,30 +58,18 @@
 
                 <!-- 表格底部信息 -->
                 <div class="table-footer clearFix">
-                    <!-- <div class="footer-data">
-                        <span>每页展示</span>
-                        <select class="select-num">
-                            <option>5000</option>
-                            <option>10000</option>
-                        </select>
-                        <span>条数据</span>
-                    </div> -->
-                    <div class="footer-data" style="display: none;">从 1 到 <span
-                            id="totalPage">1</span> 总共 <strong id="totalList">1</strong> 条数据
-                    </div>
+                    <div class="footer-data" style="display: none;">从 1 到 <span id="totalPage">1</span> 总共 <strong id="totalList">1</strong> 条数据</div>
 
                     <!-- 分页 -->
                     <nav class="nav-pagination clearFix">
-                        <div id="list_pre_btn" class="btn-pagination disabled"><span
-                                class="glyphicon glyphicon-triangle-left"></span></div>
+                        <div id="list_pre_btn" class="btn-pagination disabled"><span class="glyphicon glyphicon-triangle-left"></span></div>
 
                         <div id="list_now_num" class="num-pagination active">1</div>
 
-                        <div id="list_next_btn" class="btn-pagination disabled"><span
-                                class="glyphicon glyphicon-triangle-right"></span></div>
+                        <div id="list_next_btn" class="btn-pagination disabled"><span class="glyphicon glyphicon-triangle-right"></span></div>
                         <div class="turn">
                             <span>跳转到</span>
-                            <input type="text" id="turnPage" class="form-control"/>
+                            <input type="text" id="turnPage" class="form-control" />
                             <div class="btn-turn">GO</div>
                         </div>
                     </nav>
