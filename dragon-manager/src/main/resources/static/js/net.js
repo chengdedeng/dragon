@@ -8,6 +8,7 @@ String.prototype.format = function () {
 var APP_ADDRS = "trace/getTraces";
 var APP_TRACE = "trace/getTrace/";
 var APP_SERVICE = "service/getServiceByOffset/";
+var APP_SEARCHSERVICE = "service/searchService";
 
 var Net = {
     getSearchData: function (data, callback) {

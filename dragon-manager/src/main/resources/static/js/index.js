@@ -1,3 +1,5 @@
+var global_serviceId;
+
 // 时间转化
 Date.prototype.Format = function (fmt) { //author: meizz
 	var o = {
@@ -32,16 +34,16 @@ var loadService = {
 	startService: 1,
 	// 每页加载条数
 	limitService: 10,
+	// 存储服务名
+	serviceList: [],
+
 	init: function(container, limitService) {
 		var _this = this;
-		_this.startService = 1;
 		_this.limitService = limitService;
 		$(container).bind("click", function() {
-			// 如果已经加载过服务名，直接显示
-			if ($("#pop-service").html() != null) {
-				$("#pop-service").show().parents(".popup-cover").show();
-				return;
-			}
+			_this.startService = 1;
+			$(".popup-cover").html("");
+
 			// 加载不变的信息
 			var addHtml = '';
 			addHtml += '<div id="pop-service" class="popup-box">';
@@ -59,15 +61,40 @@ var loadService = {
 			addHtml += '</div>';
 			addHtml += '</div>';
 			$(".popup-cover").append(addHtml);
-			_this.getData(_this.startService, _this.limitService);
-			// 绑定上一页按钮
-			$(".pre-page").bind("click", function() {
-				_this.preService(this);
-			});
-			// 绑定下一页按钮
-			$(".next-page").bind("click", function() {
-				_this.nextService(this);
-			});
+
+			// 如果服务名输入框未填写任何东西
+			if ($("#service_name").val() == "") {
+				_this.getData(_this.startService, _this.limitService);
+				// 绑定上一页按钮
+				$(".pre-page").bind("click", function() {
+					console.log("pre —— getData.");
+					if ($(this).hasClass("disabled")) {return;}
+					_this.getData(--_this.startService, _this.limitService);
+				});
+				// 绑定下一页按钮
+				$(".next-page").bind("click", function() {
+					console.log("next —— getData.");
+					if ($(this).hasClass("disabled")) {return;}
+					_this.getData(++_this.startService, _this.limitService);
+				});
+			} else {
+				_this.serviceList = [];
+				_this.getDataByName($("#service_name").val(), _this.startService, _this.limitService);
+				// 绑定上一页按钮
+				$(".pre-page").bind("click", function() {
+					console.log("pre —— reloadService.");
+					if ($(this).hasClass("disabled")) {return;}
+					_this.reloadService(--_this.startService, _this.limitService);
+				});
+				// 绑定下一页按钮
+				$(".next-page").bind("click", function() {
+					console.log("next —— reloadService.");
+					if ($(this).hasClass("disabled")) {return;}
+					_this.reloadService(++_this.startService, _this.limitService);
+				});
+			}
+			
+			
 			// 绑定关闭按钮
 			$("#pop-service").find(".popup-close").bind("click", function() {
 				_this.closePop($(this));
@@ -76,12 +103,13 @@ var loadService = {
 			$(".popup-form").on("click", "li", function() {
 				$(this).addClass("active").siblings().removeClass("active");
 				// 在页面中的服务名输入框中显示该服务名称
-				$(container).val($(this).html()).attr("data-service", $(this).attr("data-id"));
+				$("#service_name").val($(this).html()).attr("data-service", $(this).attr("data-id"));
 				// 关闭弹出层
 				_this.closePop($(this));
 			})
 		});
 	},
+
 	// 加载数据
 	getData: function(startService, limitService) {
 		var _this = this;
@@ -126,19 +154,109 @@ var loadService = {
 			}
 		});
 	},
-	// 关闭弹出层
+
+	// 输入服务名查找对应服务
+	getDataByName: function(serviceName, startService, limitService) {
+		$.ajax({
+			url: APP_SEARCHSERVICE + "?prefix=" + serviceName,
+			type: "GET",
+			contentType: "application/json;charset=UTF-8",
+			success: function(data) {
+				// 异常信息
+				if (data.code != 200) {
+					alert("异常");
+					return;
+				}
+				// 如果返回数据长度为零
+				if (data.value.length == 0) {
+					alert("没有数据了");
+					return;
+				}
+
+				// 记录下对应服务名
+				serviceList = data.value;
+				console.log("startService: " + startService);
+
+				var startIndex = (startService - 1) * limitService + 1;
+				var endIndex = startService * limitService;
+				console.log("startIndex: " + startIndex + ", endIndex: " + endIndex);
+				// 记录高度, 内容
+				var popHeight = 0, addHtml = '';;
+				// 如果当前页面显示的条数不满limitService
+				if (serviceList.length <= endIndex) {
+					popHeight = 130 + 46 * (serviceList.length - startIndex + 1);
+					for (var i = startIndex - 1; i < serviceList.length; i++) {
+						addHtml += '<li data-id="' + serviceList[i].serviceId + '">' + serviceList[i].serviceName + '</li>';
+					}
+				} else {
+					popHeight = 130 + 46 * limitService;
+					for (var i = startIndex - 1; i < endIndex; i++) {
+						addHtml += '<li data-id="' + serviceList[i].serviceId + '">' + serviceList[i].serviceName + '</li>';
+					}
+				}
+
+				// 判断是否有前一页
+				if (startService == 1) {
+					$("#pop-service").find(".pre-page").addClass("disabled");
+				} else {
+					$("#pop-service").find(".pre-page").removeClass("disabled");
+				}
+
+				// 判断是否有后一页
+				if (serviceList.length <= endIndex) {
+					$("#pop-service").find(".next-page").addClass("disabled");
+				} else {
+					$("#pop-service").find(".next-page").removeClass("disabled");
+				}
+
+				// 将内容显示在弹出层内
+				$("#pop-service").find(".popup-form").html(addHtml).parents("#pop-service").css({"margin-top": -popHeight / 2, "height": popHeight}).show().parents(".popup-cover").show();
+			}
+		});
+	},
+
+	// 重新加载服务名
+	reloadService: function(startService, limitService) {
+		var startIndex = (startService - 1) * limitService + 1;
+		var endIndex = startService * limitService;
+		console.log("startIndex: " + startIndex + ", endIndex: " + endIndex);
+		// 记录高度, 内容
+		var popHeight = 0, addHtml = '';;
+		// 如果当前页面显示的条数不满limitService
+		if (serviceList.length <= endIndex) {
+			popHeight = 130 + 46 * (serviceList.length - startIndex + 1);
+			for (var i = startIndex - 1; i < serviceList.length; i++) {
+				addHtml += '<li data-id="' + serviceList[i].serviceId + '">' + serviceList[i].serviceName + '</li>';
+			}
+		} else {
+			popHeight = 130 + 46 * limitService;
+			for (var i = startIndex - 1; i < endIndex; i++) {
+				addHtml += '<li data-id="' + serviceList[i].serviceId + '">' + serviceList[i].serviceName + '</li>';
+			}
+		}
+		console.log(addHtml);
+
+		// 判断是否有前一页
+		if (startService == 1) {
+			$("#pop-service").find(".pre-page").addClass("disabled");
+		} else {
+			$("#pop-service").find(".pre-page").removeClass("disabled");
+		}
+				
+		// 判断是否有后一页
+		if (serviceList.length <= endIndex) {
+			$("#pop-service").find(".next-page").addClass("disabled");
+		} else {
+			$("#pop-service").find(".next-page").removeClass("disabled");
+		}
+
+		// 将内容显示在弹出层内
+		$("#pop-service").find(".popup-form").html(addHtml).parents("#pop-service").css({"margin-top": -popHeight / 2, "height": popHeight}).show().parents(".popup-cover").show();
+	},
+
+	// 清空服务名列表并关闭弹出层
 	closePop: function(closeObj) {
-		$(closeObj).parents(".popup-box").hide().parents(".popup-cover").hide();
-	},
-	// 点击“上一页”按钮
-	preService: function(preBtn) {
-		if ($(preBtn).hasClass("disabled")) {return;}
-		this.getData(--this.startService, this.limitService);
-	},
-	// 点击“下一页”按钮
-	nextService: function(nextBtn) {
-		if ($(nextBtn).hasClass("disabled")) {return;}
-		this.getData(++this.startService, this.limitService);
+		$(closeObj).parents(".popup-cover").html("").hide();
 	}
 };
 
@@ -321,16 +439,16 @@ var loadPage = {
 		// 点击“搜索”按钮
 		$(searchBtn).bind("click", function() {
 			// 获取serviceId
-			var serviceId = $("#service_name").attr("data-service");
+			global_serviceId = $("#service_name").attr("data-service");
 			// 获取traceTime
 			var traceTime = $("#start_time").val();
 			// 将traceTime转化成时间戳格式
 			traceTime = datetime_to_unix(traceTime);
 			// 防止服务名或开始时间为空
-			if (serviceId == "" || !traceTime) {
+			if (global_serviceId == "" || !traceTime) {
 				return;
 			}
-			_this.loadData(parseInt(serviceId), traceTime);
+			_this.loadData(parseInt(global_serviceId), traceTime);
 		});
 		// 点击“上一页”按钮
 		$(preBtn).bind("click", function() {
@@ -458,9 +576,9 @@ function checkNum(num) {
 $(function() {
 	// limitService: 每页显示服务名条数, limitList: 每页显示数据条数
 	var limitService = 10, limitList = 20;
-	
+
 	// 初始化选择服务名, 参数一: 触发元素, 参数二: 每页加载条数
-	loadService.init($("#service_name"), limitService);
+	loadService.init($("#choose-service .dropdown-toggle"), limitService);
 
 	// 初始化查询列表, 参数一: 搜索按钮, 参数二: “上一页”按钮, 参数三: “下一页”按钮, 参数四: 每页加载条数
 	loadPage.init($("#search"), $("#list_pre_btn"), $("#list_next_btn"), limitList);
@@ -476,6 +594,6 @@ $(function() {
 	// 点击表格弹出d3树
 	$(".page-container").on("click", ".data_info", function() {
 		var id = $(this).find("td").eq(0).html();
-		loadTree.init($('.popup-form').find('.active').attr('data-id'), id);
+		loadTree.init(global_serviceId, id);
 	});
 });
