@@ -38,7 +38,7 @@
             <rabbit:binding queue="traceQueue" pattern="trace"/>
         </rabbit:bindings>
     </rabbit:topic-exchange>
-
+    <!--根据消费情况适当添加消费者-->
     <rabbit:listener-container connection-factory="rabbitConnectionFactory">
         <rabbit:listener ref="insertService" method="handleMessage" queue-names="traceQueue"/>
     </rabbit:listener-container>
