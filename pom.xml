@@ -273,12 +273,12 @@
         <repository>
             <id>releases</id>
             <name>Nexus Release Repository</name>
-            <url>http://10.11.25.246:8081/nexus/content/repositories/releases</url>
+            <url>http://nexus.core.rs.com/nexus/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
             <name>Nexus Snapshot Repository</name>
-            <url>http://10.11.25.246:8081/nexus/content/repositories/snapshots</url>
+            <url>http://nexus.core.rs.com/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 </project>
