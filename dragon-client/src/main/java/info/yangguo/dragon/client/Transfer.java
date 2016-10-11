@@ -48,9 +48,10 @@ public class Transfer {
                     spansCache.add(first);
                     queue.drainTo(spansCache);
                     traceService.sendSpan(spansCache);
-                    spansCache.clear();
                 } catch (Throwable e) {
                     logger.info("TraceService send span ignore,because of:{}", e.getMessage());
+                } finally {
+                    spansCache.clear();
                 }
             }
         }
