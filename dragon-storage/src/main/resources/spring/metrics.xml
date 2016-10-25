@@ -1,0 +1,51 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:metrics="http://www.ryantenney.com/schema/metrics"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+       http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics-3.1.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- 激活利用注解进行装配 -->
+    <context:annotation-config />
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+    <bean id="graphitePropertyPlaceholderConfigurer" class="com.chinaredstar.perseus.monitor.GraphitePropertyPlaceholderConfigurer" init-method="setProperties">
+        <property name="order" value="2"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+    </bean>
+
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="order" value="3"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:metrics.properties</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <!-- Registry should be defined in only one context XML file -->
+    <metrics:metric-registry id="registry"/>
+    <!-- annotation-driven must be included in all context files -->
+    <metrics:annotation-driven metric-registry="registry"/>
+    <!-- (Optional) Registry should be defined in only one context XML file -->
+
+    <!--这个地方需要完善,因为多namespace加载顺序导致通过bean的方式引入配置失败,所以不得已使用spring自带的PropertyPlaceholderConfigurer加载配置-->
+    <metrics:reporter id="reporter" type="graphite" metric-registry="registry"
+                      period="${metrics.period}"
+                      host="${metrics.host}"
+                      port="${metrics.port}" transport="udp"/>
+    <!--<metrics:reporter type="slf4j" metric-registry="registry" period="100ms" logger="com" rate-unit="MINUTES" duration-unit="MICROSECONDS" />-->
+
+    <!-- (Optional) The metrics in this example require the metrics-jvm jar-->
+    <metrics:register metric-registry="registry">
+        <bean metrics:name="jvm.${metricsPrefix}.gc" class="com.codahale.metrics.jvm.GarbageCollectorMetricSet"/>
+        <bean metrics:name="jvm.${metricsPrefix}.memory" class="com.codahale.metrics.jvm.MemoryUsageGaugeSet"/>
+        <bean metrics:name="jvm.${metricsPrefix}.thread-states" class="com.codahale.metrics.jvm.ThreadStatesGaugeSet"/>
+        <bean metrics:name="jvm.${metricsPrefix}.fd.usage" class="com.codahale.metrics.jvm.FileDescriptorRatioGauge"/>
+    </metrics:register>
+    <!-- Beans and other Spring config -->
+</beans>

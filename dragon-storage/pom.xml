@@ -5,7 +5,7 @@
     <parent>
         <artifactId>dragon</artifactId>
         <groupId>info.yangguo</groupId>
-        <version>1.0</version>
+        <version>1.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <properties>
@@ -13,7 +13,7 @@
     </properties>
     <groupId>info.yangguo</groupId>
     <artifactId>dragon-storage</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 
     <dependencies>
         <dependency>
@@ -111,6 +111,35 @@
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
+        </dependency>
+        <!-- metrics -->
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-graphite</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-jvm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ryantenney.metrics</groupId>
+            <artifactId>metrics-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.chinaredstar</groupId>
+            <artifactId>perseus</artifactId>
         </dependency>
     </dependencies>
 </project>

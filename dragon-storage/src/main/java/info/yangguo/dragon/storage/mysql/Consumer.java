@@ -3,10 +3,11 @@ package info.yangguo.dragon.storage.mysql;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import com.codahale.metrics.annotation.Timed;
+
 import info.yangguo.dragon.common.dto.AnnotationDto;
 import info.yangguo.dragon.common.dto.AnnotationType;
 import info.yangguo.dragon.common.dto.SpanDto;
-import info.yangguo.dragon.storage.InsertService;
 import info.yangguo.dragon.storage.mysql.dao.AnnotationMapper;
 import info.yangguo.dragon.storage.mysql.dao.ServiceMapper;
 import info.yangguo.dragon.storage.mysql.dao.SpanMapper;
@@ -19,8 +20,9 @@ import info.yangguo.dragon.storage.utils.JsonUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,28 +30,31 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author:杨果
- * @date:16/9/3 上午9:16
+ * @date:2016/10/24 下午5:42
  *
  * Description:
  *
  */
-public class InsertMysqlServiceImpl2 implements InsertService {
-    private static Logger logger = LoggerFactory.getLogger(InsertMysqlServiceImpl1.class);
+@Component
+public class Consumer {
+    private static Logger logger = LoggerFactory.getLogger(Consumer.class);
     private static final ConcurrentHashMap<String, Integer> serviceMap = new ConcurrentHashMap<>();
     private static Cache<String, Boolean> cache = CacheBuilder.newBuilder()
             .maximumSize(100000)
             .expireAfterWrite(30, TimeUnit.SECONDS)
             .build();
-
-
+    @Autowired
     private AnnotationMapper annotationMapper;
+    @Autowired
     private ServiceMapper serviceMapper;
+    @Autowired
     private SpanMapper spanMapper;
+    @Autowired
     private TraceMapper traceMapper;
-    private RabbitTemplate rabbitTemplate;
 
 
-    public void handleMessage(String trace) {
+    @Timed
+    public void execute(String trace) {
         try {
             List<SpanDto> spanDtoList = (List<SpanDto>) JsonUtil.fromJson(trace);
             if (spanDtoList != null) {
@@ -61,13 +66,6 @@ public class InsertMysqlServiceImpl2 implements InsertService {
             logger.warn("{}", e.getMessage());
         }
     }
-
-    @Override
-    public void insert(List<SpanDto> spans) {
-        String spansJson = JsonUtil.toJson(spans, true);
-        rabbitTemplate.convertAndSend("LogExchange", "trace", spansJson);
-    }
-
 
     private int getServiceId(SpanDto spanDto) {
         String serviceName = spanDto.getServiceName();
@@ -143,45 +141,5 @@ public class InsertMysqlServiceImpl2 implements InsertService {
             }
             annotationMapper.addAnnotation(annotationPojo);
         }
-    }
-
-    public AnnotationMapper getAnnotationMapper() {
-        return annotationMapper;
-    }
-
-    public void setAnnotationMapper(AnnotationMapper annotationMapper) {
-        this.annotationMapper = annotationMapper;
-    }
-
-    public ServiceMapper getServiceMapper() {
-        return serviceMapper;
-    }
-
-    public void setServiceMapper(ServiceMapper serviceMapper) {
-        this.serviceMapper = serviceMapper;
-    }
-
-    public SpanMapper getSpanMapper() {
-        return spanMapper;
-    }
-
-    public void setSpanMapper(SpanMapper spanMapper) {
-        this.spanMapper = spanMapper;
-    }
-
-    public TraceMapper getTraceMapper() {
-        return traceMapper;
-    }
-
-    public void setTraceMapper(TraceMapper traceMapper) {
-        this.traceMapper = traceMapper;
-    }
-
-    public RabbitTemplate getRabbitTemplate() {
-        return rabbitTemplate;
-    }
-
-    public void setRabbitTemplate(RabbitTemplate rabbitTemplate) {
-        this.rabbitTemplate = rabbitTemplate;
     }
 }

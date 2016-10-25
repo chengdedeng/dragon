@@ -5,7 +5,7 @@
     <parent>
         <artifactId>dragon</artifactId>
         <groupId>info.yangguo</groupId>
-        <version>1.0</version>
+        <version>1.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <properties>
@@ -13,7 +13,7 @@
     </properties>
     <groupId>info.yangguo</groupId>
     <artifactId>dragon-manager</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 
     <dependencies>
         <dependency>
@@ -64,12 +64,18 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <excludes>
-                    <exclude>**/config/</exclude>
+                    <exclude>config/**</exclude>
+                    <exclude>env/**</exclude>
                 </excludes>
             </resource>
             <resource>
                 <directory>src/main/resources/config</directory>
                 <targetPath>${project.build.outputDirectory}/</targetPath>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources/env/${env}</directory>
+                <targetPath>${project.build.outputDirectory}</targetPath>
                 <filtering>true</filtering>
             </resource>
         </resources>
