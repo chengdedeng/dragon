@@ -1,5 +1,7 @@
 package info.yangguo.dragon.storage.mysql;
 
+import com.codahale.metrics.annotation.Timed;
+
 import info.yangguo.dragon.storage.mysql.dao.AnnotationMapper;
 import info.yangguo.dragon.storage.mysql.dao.ServiceMapper;
 import info.yangguo.dragon.storage.mysql.dao.SpanMapper;
@@ -8,12 +10,11 @@ import info.yangguo.dragon.storage.mysql.dao.pojo.SpanPojo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author:杨果
@@ -22,28 +23,25 @@ import java.util.concurrent.TimeUnit;
  * Description:
  *
  */
-public class ScheduleDeleteService {
-    private static Logger logger = LoggerFactory.getLogger(ScheduleDeleteService.class);
-    //系统启动多久之后开始回收日志
-    private static int initDelay = 1;
+public class DeleteLogicService {
+    private static Logger logger = LoggerFactory.getLogger(DeleteLogicService.class);
     //每次查询的trace条数
     private static int limit = 1000;
     private Configuration configuration;
+    @Autowired
     private AnnotationMapper annotationMapper;
+    @Autowired
     private ServiceMapper serviceMapper;
+    @Autowired
     private SpanMapper spanMapper;
+    @Autowired
     private TraceMapper traceMapper;
 
 
-    private ScheduleDeleteService() {
+    public DeleteLogicService(Configuration configuration) {
+        this.configuration = configuration;
     }
 
-    public ScheduleDeleteService(Configuration configuration) {
-        this.configuration = configuration;
-        ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-        scheduledThreadPoolExecutor.scheduleAtFixedRate(new DeleteTask(), initDelay, configuration.getDeleteInterval(), TimeUnit.MINUTES);
-        logger.info("Mysql定时删除任务开启");
-    }
 
     public void delete(String traceId, List<SpanPojo> spanPojos) {
         //由于没有事务,逻辑的设计严重依赖来于顺序
@@ -54,7 +52,8 @@ public class ScheduleDeleteService {
         traceMapper.deleteTrace(traceId);
     }
 
-    private void process() {
+    @Timed
+    public void process() {
         logger.info("Trace开始回收");
         long begin = new Date().getTime();
         int count = 0;
@@ -76,46 +75,5 @@ public class ScheduleDeleteService {
         }
         long end = new Date().getTime();
         logger.info("本次回收的Trace条数为:{},耗时:{}", count, end - begin);
-    }
-
-    private class DeleteTask implements Runnable {
-
-        @Override
-        public void run() {
-            process();
-        }
-    }
-
-
-    public AnnotationMapper getAnnotationMapper() {
-        return annotationMapper;
-    }
-
-    public void setAnnotationMapper(AnnotationMapper annotationMapper) {
-        this.annotationMapper = annotationMapper;
-    }
-
-    public ServiceMapper getServiceMapper() {
-        return serviceMapper;
-    }
-
-    public void setServiceMapper(ServiceMapper serviceMapper) {
-        this.serviceMapper = serviceMapper;
-    }
-
-    public SpanMapper getSpanMapper() {
-        return spanMapper;
-    }
-
-    public void setSpanMapper(SpanMapper spanMapper) {
-        this.spanMapper = spanMapper;
-    }
-
-    public TraceMapper getTraceMapper() {
-        return traceMapper;
-    }
-
-    public void setTraceMapper(TraceMapper traceMapper) {
-        this.traceMapper = traceMapper;
     }
 }

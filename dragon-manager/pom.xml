@@ -15,6 +15,43 @@
     <artifactId>dragon-manager</artifactId>
     <version>1.1</version>
 
+    <profiles>
+        <!--JVM的配置注意Java内存墙问题,考虑是后台计算还是实时服务-->
+        <!-- dev -->
+        <profile>
+            <id>dev</id>
+            <properties>
+                <env>dev</env>
+                <jvmSettings.initialMemorySize>256M</jvmSettings.initialMemorySize>
+                <jvmSettings.maxMemorySize>256M</jvmSettings.maxMemorySize>
+                <jvmSettings.maxPermSize>-XX:MaxPermSize=100M</jvmSettings.maxPermSize>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <!-- uat -->
+        <profile>
+            <id>uat</id>
+            <properties>
+                <env>uat</env>
+                <jvmSettings.initialMemorySize>512M</jvmSettings.initialMemorySize>
+                <jvmSettings.maxMemorySize>512M</jvmSettings.maxMemorySize>
+                <jvmSettings.maxPermSize>-XX:MaxPermSize=100M</jvmSettings.maxPermSize>
+            </properties>
+        </profile>
+        <!-- prd -->
+        <profile>
+            <id>prd</id>
+            <properties>
+                <env>prd</env>
+                <jvmSettings.initialMemorySize>512M</jvmSettings.initialMemorySize>
+                <jvmSettings.maxMemorySize>512M</jvmSettings.maxMemorySize>
+                <jvmSettings.maxPermSize>-XX:MaxPermSize=100M</jvmSettings.maxPermSize>
+            </properties>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -64,14 +101,8 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <excludes>
-                    <exclude>config/**</exclude>
                     <exclude>env/**</exclude>
                 </excludes>
-            </resource>
-            <resource>
-                <directory>src/main/resources/config</directory>
-                <targetPath>${project.build.outputDirectory}/</targetPath>
-                <filtering>true</filtering>
             </resource>
             <resource>
                 <directory>src/main/resources/env/${env}</directory>
@@ -101,7 +132,7 @@
                     <repositoryName>lib</repositoryName>
                     <configurationDirectory>conf</configurationDirectory>
                     <copyConfigurationDirectory>true</copyConfigurationDirectory>
-                    <configurationSourceDirectory>src/main/resources/config
+                    <configurationSourceDirectory>src/main/resources/env/${env}
                     </configurationSourceDirectory>
                     <includeConfigurationDirectoryInClasspath>true
                     </includeConfigurationDirectoryInClasspath>
@@ -157,10 +188,12 @@
                                 </generatorConfiguration>
                             </generatorConfigurations>
                             <jvmSettings>
-                                <initialMemorySize>256M</initialMemorySize>
-                                <maxMemorySize>512M</maxMemorySize>
+                                <initialMemorySize>${jvmSettings.initialMemorySize}
+                                </initialMemorySize>
+                                <maxMemorySize>${jvmSettings.maxMemorySize}</maxMemorySize>
                                 <extraArguments>
                                     <extraArgument>-server</extraArgument>
+                                    <extraArgument>${jvmSettings.maxPermSize}</extraArgument>
                                 </extraArguments>
                             </jvmSettings>
                         </daemon>

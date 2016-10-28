@@ -13,7 +13,7 @@
        default-autowire="byType">
     <aop:aspectj-autoproxy proxy-target-class="true"/>
     <context:component-scan base-package="info.yangguo"/>
-    <import resource="classpath*:spring/*.xml"/>
+    <import resource="classpath*:spring/storage-*.xml"/>
 
     <dubbo:service interface="info.yangguo.dragon.common.service.TraceService"
                    ref="traceServiceImpl"/>

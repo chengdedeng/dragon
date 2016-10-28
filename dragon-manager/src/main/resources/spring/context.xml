@@ -2,20 +2,23 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
-    <import resource="classpath*:spring/*.xml"/>
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+    <import resource="classpath*:spring/storage-*.xml"/>
+    <task:annotation-driven/>
     <aop:aspectj-autoproxy proxy-target-class="true"/>
 
     <bean id="configuration"
           class="info.yangguo.dragon.storage.mysql.Configuration">
         <property name="lifeTime" value="${delete.mysql.lifetime}"/>
-        <property name="deleteInterval" value="${delete.mysql.deleteInterval}"/>
     </bean>
 
-    <bean id="scheduleDeleteService"
-          class="info.yangguo.dragon.storage.mysql.ScheduleDeleteService" autowire="byType" lazy-init="false">
+    <bean id="deleteLogicService"
+          class="info.yangguo.dragon.storage.mysql.DeleteLogicService" autowire="byType" lazy-init="false">
         <constructor-arg ref="configuration"/>
+    </bean>
+    <bean id="scheduledService" class="info.yangguo.dragon.storage.mysql.ScheduledService">
     </bean>
 </beans>
