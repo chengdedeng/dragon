@@ -8,12 +8,11 @@ import info.yangguo.dragon.storage.mysql.dao.pojo.SpanPojo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author:杨果
@@ -40,9 +39,6 @@ public class ScheduleDeleteService {
 
     public ScheduleDeleteService(Configuration configuration) {
         this.configuration = configuration;
-        ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-        scheduledThreadPoolExecutor.scheduleAtFixedRate(new DeleteTask(), initDelay, configuration.getDeleteInterval(), TimeUnit.MINUTES);
-        logger.info("Mysql定时删除任务开启");
     }
 
     public void delete(String traceId, List<SpanPojo> spanPojos) {
@@ -54,6 +50,7 @@ public class ScheduleDeleteService {
         traceMapper.deleteTrace(traceId);
     }
 
+    @Scheduled(cron = "${delete.mysql.deleteInterval}")
     private void process() {
         logger.info("Trace开始回收");
         long begin = new Date().getTime();
